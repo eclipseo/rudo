@@ -5,7 +5,7 @@ edition = "2018"
 license = "GPL-2.0-or-later"
 authors = ["Rémi Lauzier <remilauzier@protonmail.com>"]
 description = "A utility to gain privilege access on unix system with pam"
-include = ["src/"]
+include = ["src/", "conf/"]
 
 [dependencies]
 clap = "2.33"
