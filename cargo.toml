@@ -1,0 +1,14 @@
+[package]
+name = "rudo"
+version = "0.2.0"
+edition = "2018"
+license = "GPL-2.0-or-later"
+authors = ["Rémi Lauzier <remilauzier@protonmail.com>"]
+description = "A utility to gain privilege access on unix system with pam"
+include = ["src/"]
+
+[dependencies]
+clap = "2.33"
+users = "0.11"
+pam-client = "0.3"
+configparser = "2.0"
