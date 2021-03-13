@@ -1,5 +1,5 @@
 # Rudo
-A program to have privilege access on unix system with pam
+A program to gain privilege access on Unix system with Pam
 
 # License
 GPLv2 or later
