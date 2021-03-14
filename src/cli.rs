@@ -15,7 +15,10 @@
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-use clap::{Arg, ArgMatches, AppSettings, crate_version, crate_name, crate_authors, crate_description, app_from_crate}; // CLI support
+use clap::{
+    app_from_crate, crate_authors, crate_description, crate_name, crate_version, AppSettings, Arg,
+    ArgMatches,
+}; // CLI support
 
 //Initialize the CLI and take the argument supply by the user
 pub fn init_cli() -> ArgMatches<'static> {

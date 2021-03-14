@@ -27,8 +27,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     if matches.is_present("shell") {
         rudo::run_shell(matches)?;
     } else if matches.is_present("command") {
-          // Run the program
-            rudo::run_command(matches)?;
-      }
+        // Run the program
+        rudo::run_command(matches)?;
+    }
     Ok(())
 }
