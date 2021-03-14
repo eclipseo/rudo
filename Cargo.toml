@@ -9,7 +9,7 @@ homepage = "https://github.com/remilauzier/rudo.git"
 description = "A utility to gain privilege access on unix system with pam"
 readme = "README.md"
 categories = ["authentication", "command-line-utilities"]
-include = ["src/", "conf/"]
+include = ["src/", "conf/", "build-aux/"]
 
 [dependencies]
 clap = "2.33"
