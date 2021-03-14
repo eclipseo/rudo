@@ -1,7 +1,8 @@
 # Rudo
-A program to gain privilege access on Unix system with Pam
-Can verify the membership of a user to a specific group
-can verify the user is authorized within a list in rudo.conf
+Rudo (rustuser do) allows a system administrator to give certain
+users (or groups of users) the ability to run some (or all) commands
+as root while logging all commands and arguments. Sudo operates on a
+per-command basis.  It is not a replacement for the shell.
 
 # License
 GPLv2 or later
