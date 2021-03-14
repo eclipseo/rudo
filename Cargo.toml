@@ -8,8 +8,9 @@ repository = "https://github.com/remilauzier/rudo.git"
 homepage = "https://github.com/remilauzier/rudo.git"
 description = "A utility to gain privilege access on unix system with pam"
 readme = "README.md"
+keywords = ["cli", "sudo"]
 categories = ["authentication", "command-line-utilities"]
-include = ["src/", "conf/"]
+include = ["src/", "conf/", "build-aux/", "LICENSE", "README.md", "Cargo.toml"]
 
 [dependencies]
 clap = "2.33"
