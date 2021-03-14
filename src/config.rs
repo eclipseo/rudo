@@ -68,14 +68,16 @@ pub fn init_conf(path: &PathBuf) -> Result<Config, Box<dyn Error>> {
     } else {
         config.read(String::from(
             "[user]
-#The user you want to impersonate
+# The user you want to impersonate
 user = root
 
 [access]
-#The group the user must be a part of to have privilege access
+# The group the user must be a part of to have privilege access
 group = wheel
 # Do we demand for the user password. Risky to set to false, can't guaranty security.
-password = true",
+password = true
+# The list of users authorized to gain privileged access
+userlist = root",
         ))?;
         config.write(path.as_path().to_str().unwrap())?;
     }
