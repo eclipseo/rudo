@@ -1,11 +1,14 @@
 project('rudo',
-          version: '0.1.0',
+          version: '0.2.0',
     meson_version: '>= 0.50.0',
-  default_options: [ 'warning_level=2',
+    license: 'GPLv2+'
+  default_options: [ 'warning_level=3',
+  		     'install_umask=0066'
                    ],
 )
 
 
 
 subdir('src')
-
+subdir('conf')
+subdir('build-aux')

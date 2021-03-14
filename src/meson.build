@@ -1,5 +1,11 @@
 rudo_sources = [
   'main.rs',
+  'lib.rs',
+  'auth.rs',
+  'cli.rs',
+  'command.rs',
+  'config.rs',
+  'user.rs',
 ]
 
 rudo_deps = [
