@@ -40,6 +40,14 @@ impl User {
             group,
         }
     }
+    pub fn verify_user(&self, userlist: &str) -> Result<(), &'static str> {
+        let username = self.user.name().to_str().unwrap();
+        if userlist.contains(username) {
+            Ok(())
+        } else {
+            Err("You are not part of the authorized users")
+        }
+    }
     // Take the vector containing the Group and search for the group supply in the configuration
     pub fn verify_group(&self, arggroup: &str) -> Result<(), &'static str> {
         let group = &self.group;
@@ -75,6 +83,20 @@ mod tests {
         let gid = userdata.user.primary_group_id();
         let group = userscache.get_group_by_gid(gid).unwrap();
         let groupname = group.name().to_str().unwrap();
-        userdata.verify_group(groupname)
+        if userdata.verify_group("test").is_err() {
+            Ok(())
+        } else {
+         Err("The group should not correspond with test")
+        }
     }
+    #[test]
+    fn test_verify_user() -> Result<(), &'static str> {
+        let userscache = UsersCache::new();
+        let userdata = User::new(&userscache);
+        if userdata.verify_user("test").is_err() {
+            Ok(())
+        } else {
+            Err("The user should not correspond with test")
+        }
+       }
 }

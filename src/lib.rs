@@ -47,6 +47,14 @@ pub fn run_command(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
 
     println!("Hello {}!", userdata.username);
 
+    match userdata.verify_user(conf.userlist.as_str()) {
+        Ok(()) => (),
+        Err(err) => {
+            eprintln!("{}", err);
+            process::exit(1);
+        }
+    }
+
     //Verify that the user is in the group for privilege access
     match userdata.verify_group(conf.group.as_str()) {
         Ok(()) => (),

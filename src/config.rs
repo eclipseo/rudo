@@ -27,15 +27,17 @@ pub struct Config {
     pub group: String,
     pub password: bool,
     pub shell: String,
+    pub userlist : String,
 }
 
 impl Config {
-    fn new(user: String, group: String, password: bool, shell: String) -> Self {
+    fn new(user: String, group: String, password: bool, shell: String, userlist: String) -> Self {
         Self {
             user,
             group,
             password,
             shell,
+            userlist,
         }
     }
     pub fn update(mut self, matches: &ArgMatches) -> Self {
@@ -56,6 +58,7 @@ impl Default for Config {
             group: String::from("wheel"),
             password: true,
             shell: String::from("/bin/sh"),
+            userlist: String::from("root"),
         }
     }
 }
@@ -93,6 +96,7 @@ userlist = root",
     let password = config
         .getbool("access", "password")?
         .unwrap_or_else(|| Config::default().password);
-    let conf = Config::new(user, group, password, shell);
+    let userlist = config.get("access", "userlist").unwrap_or_else(|| Config::default().userlist);
+    let conf = Config::new(user, group, password, shell, userlist);
     Ok(conf)
 }
