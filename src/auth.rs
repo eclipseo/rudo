@@ -23,7 +23,7 @@ use std::error::Error;
 
 pub fn auth_pam(
     conf: &config::Config,
-    userdata: user::User,
+    userdata: &user::User,
 ) -> Result<Context<Conversation>, Box<dyn Error>> {
     // Create the pam context
     debug!("Pam context creation");
@@ -35,6 +35,7 @@ pub fn auth_pam(
     debug!("Pam context create");
 
     // Don't ask for password if false in the conf
+    info!("{} demand authorization to use rudo", userdata.username);
     if conf.password {
         // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
         debug!("Password ask");

@@ -20,12 +20,17 @@ extern crate log;
 mod cli;
 mod config;
 
+use log::LevelFilter;
+use env_logger::{Builder, Env};
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Init Logs
-    env_logger::init();
-    debug!("Starting logs");
+    // Initialize Logs
+    let env = Env::new().filter("RUDO_LOG");
+    let mut builder = Builder::from_env(env);
+    builder.filter_level(LevelFilter::Info);
+    builder.init();
+    info!("Starting logs");
 
     // Initialize the cli interface with clap
     debug!("Starting CLI initialization");
@@ -45,6 +50,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         debug!("Command finish")
     }
     // End of program
-    debug!("End of program");
+    info!("End of program");
     Ok(())
 }

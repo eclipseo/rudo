@@ -86,7 +86,7 @@ pub fn run_command(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
 
     // Create the pam context
     debug!("Pam context initialization");
-    let mut context = auth::auth_pam(&conf, userdata)?;
+    let mut context = auth::auth_pam(&conf, &userdata)?;
     debug!("Pam context create");
 
     // Open session and initialize credentials
@@ -95,7 +95,7 @@ pub fn run_command(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     debug!("Session create");
 
     // Run a process in the PAM environment and pass the command and the arguments
-    debug!("Begin the command pass by the user");
+    info!("{} has been authorized. Command: {} {:?}", userdata.username, data.program, data.args);
     let mut child = Command::new(data.program)
         .args(data.args)
         .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
@@ -157,7 +157,7 @@ pub fn run_shell(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
 
     // Create the pam context
     debug!("Pam context initialization");
-    let mut context = auth::auth_pam(&conf, userdata)?;
+    let mut context = auth::auth_pam(&conf, &userdata)?;
     debug!("Pam context create");
 
     // Open session and initialize credentials
@@ -166,7 +166,7 @@ pub fn run_shell(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     debug!("Session create");
 
     // Run a process in the PAM environment and create a new shell
-    debug!("Create the shell");
+    info!("{} has been authorized. Shell granted", userdata.username);
     let mut child = Command::new(conf.shell)
         .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
         .spawn()?;
