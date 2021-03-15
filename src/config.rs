@@ -132,12 +132,4 @@ mod tests {
             Err("Test failed")
         }
     }
-    #[test]
-    fn test_init_conf() -> Result<(), &'static str> {
-        let conf = init_conf(&PathBuf::from("rudo.conf"));
-        match conf {
-            Ok(_) => Ok(()),
-            Err(_) => Err("Test failed"),
-        }
-    }
 }
