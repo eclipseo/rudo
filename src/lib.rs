@@ -168,6 +168,9 @@ pub fn run_shell(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     // Run a process in the PAM environment and create a new shell
     info!("{} has been authorized. Shell granted", userdata.username);
     let mut child = Command::new(conf.shell)
+        .arg("-l")
+        .arg("-p") // Necessary to have privilege in the new shell
+        .env_clear()
         .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
         .spawn()?;
     // Wait for the command to finish or the terminal end before
