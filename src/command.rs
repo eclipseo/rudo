@@ -22,15 +22,47 @@ pub struct Comm<'a> {
 }
 
 impl<'a> Comm<'a> {
-    pub fn new(mut value: Vec<&'a str>) -> Self {
+    // Create the new Comm with the extract value supply by the user
+    pub fn new(mut value: Vec<&'a str>) -> Result<Self, &str> {
+        debug!("Verifying that value is not empty");
+        // Verify that it's not empty
+        if !value.is_empty() {
+        debug!("Value is not empty, proceeding");
         let mut program = String::new();
+        // Extract the first word then remove it
         program.push_str(value[0]);
         value.remove(0);
+        // Clone the rest of the value
         let args = value.clone();
-        Self {
-            value,
-            program,
-            args,
+        debug!("return Comm");
+        Ok(Self { value, program, args})
+        } else {
+            debug!("Value is empty");
+            Err("Value is empty")
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_comm_new() -> Result<(), &'static str> {
+        let comm = Comm::new(vec!["test"]);
+        if comm.is_ok() {
+            Ok(())
+        } else {
+            Err("Test failed")
+        }
+    }
+    #[test]
+    fn test_comm_new_empty() -> Result<(), &'static str> {
+        let comm = Comm::new(vec![]);
+        if comm.is_err() {
+            Ok(())
+        } else {
+            Err("Test failed")
         }
     }
 }

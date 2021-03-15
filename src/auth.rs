@@ -17,8 +17,8 @@
 
 use crate::config;
 use crate::user;
-use pam_client::conv_cli::Conversation; // CLI implementation of pam
-use pam_client::{Context, Flag}; // pam support
+use pam_client::conv_cli::Conversation;
+use pam_client::{Context, Flag};
 use std::error::Error;
 
 pub fn auth_pam(
@@ -26,22 +26,31 @@ pub fn auth_pam(
     userdata: user::User,
 ) -> Result<Context<Conversation>, Box<dyn Error>> {
     // Create the pam context
+    debug!("Pam context creation");
     let mut context = Context::new(
-        "sudo",                           // Service name "sudo" for now
-        Some(userdata.username.as_str()), // give the name of the actual user
+        "rudo",
+        Some(userdata.username.as_str()), // Give the name of the actual user
         Conversation::new(),
     )?;
+    debug!("Pam context create");
 
+    // Don't ask for password if false in the conf
     if conf.password {
         // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
+        debug!("Password ask");
         context.authenticate(Flag::DISALLOW_NULL_AUTHTOK)?;
+        debug!("Password give");
     }
 
     // Validate the account (is not locked, expired, etc.)
+    debug!("Validate the account");
     context.acct_mgmt(Flag::DISALLOW_NULL_AUTHTOK)?;
+    debug!("Account validate");
 
     // Change the user to root to have privilege access
+    debug!("Change the user");
     context.set_user(Some(conf.user.as_str()))?;
+    debug!("User change");
 
     Ok(context)
 }

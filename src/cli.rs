@@ -18,12 +18,12 @@
 use clap::{
     app_from_crate, crate_authors, crate_description, crate_name, crate_version, AppSettings, Arg,
     ArgMatches,
-}; // CLI support
+};
 
-//Initialize the CLI and take the argument supply by the user
+// Initialize the CLI and take the argument supply by the user
 pub fn init_cli() -> ArgMatches<'static> {
     let matches = app_from_crate!()
-        .setting(AppSettings::ArgRequiredElseHelp)
+        .setting(AppSettings::ArgRequiredElseHelp) // Show help by default
         .arg(
             Arg::with_name("command")
                 .short("c")
@@ -32,17 +32,8 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .help("Pass the command to execute")
                 .conflicts_with("shell")
                 .required_unless("shell")
-                .index(1) //Be sure that the command is the first so we dont have to write "-c" to take a command
-                .multiple(true) //To be able to have the command and it's list of argument
-                .takes_value(true),
-        )
-        //Take the name of the group the user must be in to have privilege access
-        .arg(
-            Arg::with_name("group")
-                .short("g")
-                .long("group")
-                .value_name("group")
-                .help("Sets the group the user must be in to have privilege access")
+                .index(1) // Be sure that the command is the first so we dont have to write "-c" to take a command
+                .multiple(true) // To be able to have the command and it's list of argument
                 .takes_value(true),
         )
         .arg(
@@ -60,7 +51,7 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .short("u")
                 .long("user")
                 .value_name("user")
-                .help("The user you want to be in your command")
+                .help("The user you want to impersonate")
                 .takes_value(true),
         )
         .get_matches();

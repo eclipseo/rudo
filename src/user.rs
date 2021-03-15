@@ -26,13 +26,15 @@ pub struct User {
     group: Vec<Group>,
 }
 
-// Create the User and its data for later use
 impl User {
+    // Create the user and it's data for later use
     pub fn new(usersdata: &UsersCache) -> User {
+        debug!("Begin user creation");
         let uid = usersdata.get_current_uid();
         let user = usersdata.get_user_by_uid(uid).unwrap();
         let username = user.name().to_str().unwrap().to_string();
         let group = user.groups().unwrap();
+        debug!("User create");
         User {
             user,
             //uid,
@@ -40,20 +42,25 @@ impl User {
             group,
         }
     }
+    // Verify that the user is part of the list of authorized users
     pub fn verify_user(&self, userlist: &str) -> Result<(), &'static str> {
+        debug!("Begin to verify user");
         let username = self.user.name().to_str().unwrap();
         if userlist.contains(username) {
+            debug!("User is authorize");
             Ok(())
         } else {
+            debug!("User is not authorize");
             Err("You are not part of the authorized users")
         }
     }
     // Take the vector containing the Group and search for the group supply in the configuration
     pub fn verify_group(&self, arggroup: &str) -> Result<(), &'static str> {
+        debug!("Begin group verification");
         let group = &self.group;
         let mut count = 0;
 
-        //Compare the group with the vec containing the list of group
+        // Compare the supply group with the list of the user membership
         for gr in group {
             if gr.name() == arggroup {
                 count += 1;
@@ -61,9 +68,11 @@ impl User {
         }
 
         if count == 1 {
+            debug!("User is a member of authorized group");
             println!("You are a member of the group {}", arggroup);
             Ok(())
         } else {
+            debug!("User is not a member of authorized group");
             let error = "You are not a member of group ";
             error.to_string().push_str(arggroup);
             Err(error)
@@ -74,15 +83,11 @@ impl User {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use users::Groups;
 
     #[test]
     fn test_verify_group() -> Result<(), &'static str> {
         let userscache = UsersCache::new();
         let userdata = User::new(&userscache);
-        let gid = userdata.user.primary_group_id();
-        let group = userscache.get_group_by_gid(gid).unwrap();
-        let groupname = group.name().to_str().unwrap();
         if userdata.verify_group("test").is_err() {
             Ok(())
         } else {

@@ -14,6 +14,8 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#[macro_use]
+extern crate log;
 
 mod cli;
 mod config;
@@ -21,14 +23,28 @@ mod config;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    //Initialize the cli interface with clap
-    let matches = cli::init_cli();
+    // Init Logs
+    env_logger::init();
+    debug!("Starting logs");
 
+    // Initialize the cli interface with clap
+    debug!("Starting CLI initialization");
+    let matches = cli::init_cli();
+    debug!("CLI initialize");
+
+    // Decide witch option to run with CLI
     if matches.is_present("shell") {
+        // Run the shell
+        debug!("Shell command detect");
         rudo::run_shell(matches)?;
+        debug!("Shell finish");
     } else if matches.is_present("command") {
-        // Run the program
+        // Run the command
+        debug!("Run the supply command");
         rudo::run_command(matches)?;
+        debug!("Command finish")
     }
+    // End of program
+    debug!("End of program");
     Ok(())
 }
