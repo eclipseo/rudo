@@ -39,7 +39,16 @@ pub fn auth_pam(
     if conf.password {
         // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
         debug!("Password ask");
-        context.authenticate(Flag::DISALLOW_NULL_AUTHTOK)?;
+        let mut count = 0;
+        while count < 3 {
+        match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
+            Ok(()) => break,
+            Err(err) => {
+            eprintln!("Error: {}", err);
+            count+=1
+        }
+        }
+        }
         debug!("Password give");
     }
 
