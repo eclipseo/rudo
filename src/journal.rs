@@ -18,10 +18,15 @@ use log::LevelFilter;
 use std::error::Error;
 use systemd::journal;
 
-pub fn log_journald() -> Result<(), Box<dyn Error>> {
+pub fn log_journald(log: bool) -> Result<(), Box<dyn Error>> {
     // Initialize Logs
     journal::JournalLog::init()?;
-    log::set_max_level(LevelFilter::Info);
-    info!("Starting logs");
+    if log {
+        log::set_max_level(LevelFilter::Debug);
+        info!("Starting Debug logs");
+    } else {
+        log::set_max_level(LevelFilter::Info);
+        info!("Starting logs");
+    }
     Ok(())
 }

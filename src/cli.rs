@@ -54,6 +54,14 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .help("The user you want to impersonate")
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("debug")
+                .short("d")
+                .long("debug")
+                .value_name("debug")
+                .help("Log debug messages")
+                .takes_value(false),
+        )
         .get_matches();
     matches
 }

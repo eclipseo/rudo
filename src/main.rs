@@ -27,9 +27,10 @@ use std::path::Path;
 fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the cli interface with clap
     let matches = cli::init_cli();
+    let log = matches.is_present("debug");
 
     if Path::new("/run/systemd/journal/").exists() {
-        journal::log_journald()?;
+        journal::log_journald(log)?;
     } else {
         eprintln!("Missing journald file");
     }
