@@ -4,7 +4,7 @@
 %global crate rudo
 
 Name:           rust-%{crate}
-Version:        0.2.0
+Version:        0.3.1
 Release:        1%{?dist}
 Summary:        Utility to gain privilege access on unix system with pam
 
@@ -23,6 +23,7 @@ Requires: pam
 BuildRequires:  rust-packaging
 BuildRequires:  openssl-devel
 BuildRequires:  pam-devel
+BuildRequires:  systemd-devel
 
 %global _description %{expand:
 Utility to gain privilege access on unix system with pam.}
