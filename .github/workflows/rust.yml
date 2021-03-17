@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install dependency
-      run: sudo apt install libpam0g-dev
+      run: sudo apt install libpam0g-dev libsystemd-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
