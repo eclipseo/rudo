@@ -14,39 +14,14 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#[macro_use]
-extern crate log;
-
-mod cli;
-mod config;
-mod journal;
-
+use systemd::journal;
+use log::LevelFilter;
 use std::error::Error;
-use std::path::Path;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize the cli interface with clap
-    let matches = cli::init_cli();
-
-    if Path::new("/run/systemd/journal/").exists() {
-        journal::log_journald()?;
-    } else {
-        eprintln!("Missing journald file");
-    }
-
-    // Decide witch option to run with CLI
-    if matches.is_present("shell") {
-        // Run the shell
-        debug!("Shell command detect");
-        rudo::run_shell(matches)?;
-        debug!("Shell finish");
-    } else if matches.is_present("command") {
-        // Run the command
-        debug!("Run the supply command");
-        rudo::run_command(matches)?;
-        debug!("Command finish")
-    }
-    // End of program
-    info!("End of program");
+pub fn log_journald() -> Result<(), Box<dyn Error>> {
+    // Initialize Logs
+    journal::JournalLog::init()?;
+    log::set_max_level(LevelFilter::Info);
+    info!("Starting logs");
     Ok(())
 }
