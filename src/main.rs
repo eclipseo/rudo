@@ -19,23 +19,20 @@ extern crate log;
 
 mod cli;
 mod config;
+mod journal;
 
-use env_logger::{Builder, Env};
-use log::LevelFilter;
 use std::error::Error;
+use std::path::Path;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize Logs
-    let env = Env::new().filter("RUDO_LOG");
-    let mut builder = Builder::from_env(env);
-    builder.filter_level(LevelFilter::Info);
-    builder.init();
-    info!("Starting logs");
-
     // Initialize the cli interface with clap
-    debug!("Starting CLI initialization");
     let matches = cli::init_cli();
-    debug!("CLI initialize");
+
+    if Path::new("/run/systemd/journal/").exists() {
+        journal::log_journald()?;
+    } else {
+        eprintln!("Missing journald file");
+    }
 
     // Decide witch option to run with CLI
     if matches.is_present("shell") {
