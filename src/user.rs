@@ -91,7 +91,7 @@ mod tests {
         if userdata.verify_group("test").is_err() {
             Ok(())
         } else {
-         Err("The group should not correspond with test")
+            Err("The group should not correspond with test")
         }
     }
     #[test]
@@ -103,5 +103,5 @@ mod tests {
         } else {
             Err("The user should not correspond with test")
         }
-       }
+    }
 }

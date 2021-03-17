@@ -27,15 +27,19 @@ impl<'a> Comm<'a> {
         debug!("Verifying that value is not empty");
         // Verify that it's not empty
         if !value.is_empty() {
-        debug!("Value is not empty, proceeding");
-        let mut program = String::new();
-        // Extract the first word then remove it
-        program.push_str(value[0]);
-        value.remove(0);
-        // Clone the rest of the value
-        let args = value.clone();
-        debug!("return Comm");
-        Ok(Self { value, program, args})
+            debug!("Value is not empty, proceeding");
+            let mut program = String::new();
+            // Extract the first word then remove it
+            program.push_str(value[0]);
+            value.remove(0);
+            // Clone the rest of the value
+            let args = value.clone();
+            debug!("return Comm");
+            Ok(Self {
+                value,
+                program,
+                args,
+            })
         } else {
             debug!("Value is empty");
             Err("Value is empty")

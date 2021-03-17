@@ -20,8 +20,8 @@ extern crate log;
 mod cli;
 mod config;
 
-use log::LevelFilter;
 use env_logger::{Builder, Env};
+use log::LevelFilter;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {

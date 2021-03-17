@@ -41,13 +41,13 @@ pub fn auth_pam(
         debug!("Password ask");
         let mut count = 0;
         while count < 3 {
-        match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
-            Ok(()) => break,
-            Err(err) => {
-            eprintln!("Error: {}", err);
-            count+=1
-        }
-        }
+            match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
+                Ok(()) => break,
+                Err(err) => {
+                    eprintln!("Error: {}", err);
+                    count += 1
+                }
+            }
         }
         debug!("Password give");
     }

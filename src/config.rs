@@ -27,13 +27,20 @@ pub struct Config {
     pub group: String,
     pub password: bool,
     pub shell: String,
-    pub userlist : String,
+    pub userlist: String,
     pub greeting: bool,
 }
 
 impl Config {
     // Create the new configuration
-    fn new(user: String, group: String, password: bool, shell: String, userlist: String, greeting: bool) -> Self {
+    fn new(
+        user: String,
+        group: String,
+        password: bool,
+        shell: String,
+        userlist: String,
+        greeting: bool,
+    ) -> Self {
         debug!("Config create");
         Self {
             user,
@@ -112,8 +119,12 @@ greeting = true",
     let password = config
         .getbool("access", "password")?
         .unwrap_or_else(|| Config::default().password);
-    let userlist = config.get("access", "userlist").unwrap_or_else(|| Config::default().userlist);
-    let greeting = config.getbool("miscellaneous", "greeting")?.unwrap_or_else(|| Config::default().greeting);
+    let userlist = config
+        .get("access", "userlist")
+        .unwrap_or_else(|| Config::default().userlist);
+    let greeting = config
+        .getbool("miscellaneous", "greeting")?
+        .unwrap_or_else(|| Config::default().greeting);
     let conf = Config::new(user, group, password, shell, userlist, greeting);
     debug!("Config create");
     Ok(conf)
@@ -125,8 +136,21 @@ mod tests {
 
     #[test]
     fn test_config_new() -> Result<(), &'static str> {
-        let conf = Config::new(String::from("test"), String::from("test"), false, String::from("test"), String::from("test"), false);
-        if conf.user == "test" && conf.group == "test" && !conf.password && conf.shell == "test" && conf.userlist == "test" && !conf.greeting {
+        let conf = Config::new(
+            String::from("test"),
+            String::from("test"),
+            false,
+            String::from("test"),
+            String::from("test"),
+            false,
+        );
+        if conf.user == "test"
+            && conf.group == "test"
+            && !conf.password
+            && conf.shell == "test"
+            && conf.userlist == "test"
+            && !conf.greeting
+        {
             Ok(())
         } else {
             Err("Test failed")

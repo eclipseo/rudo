@@ -58,7 +58,7 @@ pub fn run_command(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     // Greeting to the user
     debug!("Start user greeting");
     if conf.greeting {
-    println!("Hello {}!", userdata.username);
+        println!("Hello {}!", userdata.username);
     }
     debug!("Greeting finish");
 
@@ -95,7 +95,10 @@ pub fn run_command(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     debug!("Session create");
 
     // Run a process in the PAM environment and pass the command and the arguments
-    info!("{} has been authorized. Command: {} {:?}", userdata.username, data.program, data.args);
+    info!(
+        "{} has been authorized. Command: {} {:?}",
+        userdata.username, data.program, data.args
+    );
     let mut child = Command::new(data.program)
         .args(data.args)
         .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
@@ -114,7 +117,6 @@ pub fn run_shell(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     let conf = config::init_conf(&path)?;
     debug!("Configuration initialize");
 
-
     // Update configuration if necessary as CLI as the priority
     debug!("Update configuration");
     let conf = config::Config::update(conf, &matches);
@@ -129,7 +131,7 @@ pub fn run_shell(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     // Greeting to the user
     debug!("Start user greeting");
     if conf.greeting {
-    println!("Hello {}!", userdata.username);
+        println!("Hello {}!", userdata.username);
     }
     debug!("Greeting finish");
 
