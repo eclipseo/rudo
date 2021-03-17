@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-use systemd::journal;
 use log::LevelFilter;
 use std::error::Error;
+use systemd::journal;
 
 pub fn log_journald() -> Result<(), Box<dyn Error>> {
     // Initialize Logs
