@@ -1,3 +1,5 @@
+[![GitHub issues](https://img.shields.io/github/issues/remilauzier/rudo?style=flat-square)](https://github.com/remilauzier/rudo/issues)
+[![GitHub license](https://img.shields.io/github/license/remilauzier/rudo?style=flat-square)](https://github.com/remilauzier/rudo/blob/main/LICENSE)
 # Rudo
 Rudo "RustUser do" allows a system administrator to give certain
 users (or groups of users) the ability to run some (or all) commands
