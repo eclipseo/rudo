@@ -1,7 +1,6 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/remilauzier/rudo?style=flat-square)
 ![Crates.io](https://img.shields.io/crates/v/rudo?style=flat-square)
 ![Crates.io](https://img.shields.io/crates/d/rudo?style=flat-square)
-![GitHub branch checks state](https://img.shields.io/github/checks-status/remilauzier/rudo/main?style=flat-square)
 [![GitHub issues](https://img.shields.io/github/issues/remilauzier/rudo?style=flat-square)](https://github.com/remilauzier/rudo/issues)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/remilauzier/rudo?style=flat-square)
 ![Lines of code](https://img.shields.io/tokei/lines/github/remilauzier/rudo?style=flat-square)
