@@ -19,8 +19,7 @@ use clap::ArgMatches;
 use configparser::ini::Ini;
 use std::env;
 use std::error::Error;
-use std::fs;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 pub struct Config {
     pub user: String,
@@ -41,7 +40,6 @@ impl Config {
         userlist: String,
         greeting: bool,
     ) -> Self {
-        debug!("Config create");
         Self {
             user,
             group,
@@ -52,11 +50,12 @@ impl Config {
         }
     }
     pub fn update(mut self, matches: &ArgMatches) -> Self {
-        debug!("Updating configuration");
         if matches.value_of("user").is_some() {
             self.user = matches.value_of("user").unwrap().to_string();
         }
-        debug!("Configuration has been update");
+        if matches.is_present("greeting") {
+            self.greeting = true;
+        }
         self
     }
 }
@@ -78,13 +77,18 @@ pub fn init_conf(path: &PathBuf) -> Result<Config, Box<dyn Error>> {
     // Initialize configuration
     debug!("Begin initializing configuration");
     let mut config = Ini::new();
+    debug!("Finish initializing configuration");
 
     // Verify that the file is there or write to it with the defaults
+    let path = Path::new(path);
     debug!("Verifying that /etc/rudo.conf exist");
-    if fs::read(&path).is_ok() {
+    if path.exists() && path.is_file() {
         debug!("Loading /etc/rudo.conf");
-        config.load(path.as_path().to_str().unwrap())?;
-    } else {
+        config.load(path.to_str().unwrap())?;
+        debug!("Finish loading");
+    } else if path.exists() && path.is_dir() {
+        return Err(From::from("Error /etc/Rudo.conf is a directory"));
+    } else if !path.exists() {
         debug!("/etc/rudo.conf doesnt exist! Creating it");
         eprintln!("/etc/rudo.conf doesnt exist! Creating it");
         config.read(String::from(
@@ -103,13 +107,13 @@ userlist = root
 # User greeting
 greeting = true",
         ))?;
-        config.write(path.as_path().to_str().unwrap())?;
+        config.write(path.to_str().unwrap())?;
         debug!("Creation finish");
     }
 
     // Extract the various element to create the config
-    debug!("Creating the config");
-    let shell = env::var("SHELL")?;
+    debug!("Extract the config from rudo.conf");
+    let shell = env::var("SHELL").unwrap_or_else(|_| Config::default().shell);
     let user = config
         .get("user", "user")
         .unwrap_or_else(|| Config::default().user);
@@ -126,7 +130,7 @@ greeting = true",
         .getbool("miscellaneous", "greeting")?
         .unwrap_or_else(|| Config::default().greeting);
     let conf = Config::new(user, group, password, shell, userlist, greeting);
-    debug!("Config create");
+    debug!("Config has been extract");
     Ok(conf)
 }
 
@@ -135,7 +139,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_config_new() -> Result<(), &'static str> {
+    fn test_config_new() -> Result<(), Box<dyn Error>> {
         let conf = Config::new(
             String::from("test"),
             String::from("test"),
@@ -153,7 +157,17 @@ mod tests {
         {
             Ok(())
         } else {
-            Err("Test failed")
+            Err(From::from("Test failed to create Config struct"))
         }
     }
-}
+    #[test]
+    fn test_init_conf() -> Result<(), Box<dyn Error>> {
+        let path = PathBuf::from("rudo.conf");
+        let conf = init_conf(&path)?;
+        if conf.user == "root" && conf.group == "wheel" && conf.password && conf.shell == "/bin/bash" && conf.userlist == "root" && conf.greeting {
+            Ok(())
+        } else {
+            Err(From::from("test failed"))
+        }
+        }
+    }

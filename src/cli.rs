@@ -55,6 +55,14 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("greeting")
+                .short("g")
+                .long("greeting")
+                .value_name("greeting")
+                .help("Greeting user")
+                .takes_value(false),
+        )
+        .arg(
             Arg::with_name("debug")
                 .short("d")
                 .long("debug")
