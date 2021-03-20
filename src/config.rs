@@ -167,7 +167,7 @@ mod tests {
         if conf.user == "root" && conf.group == "wheel" && conf.password && conf.shell == "/bin/bash" && conf.userlist == "root" && conf.greeting {
             Ok(())
         } else {
-            Err(From::from("test failed"))
+            Err(From::from("test failed to reproduced Config struct"))
         }
         }
     }
