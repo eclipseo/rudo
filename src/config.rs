@@ -19,7 +19,7 @@ use clap::ArgMatches;
 use configparser::ini::Ini;
 use std::env;
 use std::error::Error;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
 pub struct Config {
     pub user: String,
@@ -164,10 +164,16 @@ mod tests {
     fn test_init_conf() -> Result<(), Box<dyn Error>> {
         let path = PathBuf::from("rudo.conf");
         let conf = init_conf(&path)?;
-        if conf.user == "root" && conf.group == "wheel" && conf.password && conf.shell == "/bin/bash" && conf.userlist == "root" && conf.greeting {
+        if conf.user == "root"
+            && conf.group == "wheel"
+            && conf.password
+            && conf.shell == "/bin/bash"
+            && conf.userlist == "root"
+            && conf.greeting
+        {
             Ok(())
         } else {
             Err(From::from("test failed to reproduced Config struct"))
         }
-        }
     }
+}
