@@ -16,7 +16,8 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use std::sync::Arc;
-use users::{Group, Users, UsersCache}; // safe library to extract data for user and group
+use std::error::Error;
+use users::{Group, Users, UsersCache};
 
 // Stock the User and is value for later use
 pub struct User {
@@ -43,7 +44,7 @@ impl User {
         }
     }
     // Verify that the user is part of the list of authorized users
-    pub fn verify_user(&self, userlist: &str) -> Result<(), &'static str> {
+    pub fn verify_user(&self, userlist: &str) -> Result<(), Box<dyn Error>> {
         debug!("Begin to verify user");
         let username = self.user.name().to_str().unwrap();
         if userlist.contains(username) {
@@ -51,11 +52,11 @@ impl User {
             Ok(())
         } else {
             debug!("User is not authorize");
-            Err("You are not part of the authorized users")
+            Err(From::from("You are not part of the authorized users"))
         }
     }
     // Take the vector containing the Group and search for the group supply in the configuration
-    pub fn verify_group(&self, arggroup: &str) -> Result<(), &'static str> {
+    pub fn verify_group(&self, arggroup: &str) -> Result<(), Box<dyn Error>> {
         debug!("Begin group verification");
         let group = &self.group;
         let mut count = 0;
@@ -75,7 +76,7 @@ impl User {
             debug!("User is not a member of authorized group");
             let error = "You are not a member of group ";
             error.to_string().push_str(arggroup);
-            Err(error)
+            Err(From::from(error))
         }
     }
 }
@@ -85,23 +86,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_verify_group() -> Result<(), &'static str> {
+    fn test_verify_group() -> Result<(), Box<dyn Error>> {
         let userscache = UsersCache::new();
         let userdata = User::new(&userscache);
         if userdata.verify_group("test").is_err() {
             Ok(())
         } else {
-            Err("The group should not correspond with test")
+            Err(From::from("The group should not correspond with test"))
         }
     }
     #[test]
-    fn test_verify_user() -> Result<(), &'static str> {
+    fn test_verify_user() -> Result<(), Box<dyn Error>> {
         let userscache = UsersCache::new();
         let userdata = User::new(&userscache);
         if userdata.verify_user("test").is_err() {
             Ok(())
         } else {
-            Err("The user should not correspond with test")
+            Err(From::from("The user should not correspond with test"))
         }
     }
 }
