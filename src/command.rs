@@ -15,34 +15,31 @@
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-pub struct Comm<'a> {
-    value: Vec<&'a str>,
+use std::error::Error;
+
+pub struct Command<'a> {
     pub program: String,
     pub args: Vec<&'a str>,
 }
 
-impl<'a> Comm<'a> {
-    // Create the new Comm with the extract value supply by the user
-    pub fn new(mut value: Vec<&'a str>) -> Result<Self, &str> {
-        debug!("Verifying that value is not empty");
+impl<'a> Command<'a> {
+    // Create the new Command with the command supply by the user
+    pub fn new(mut command: Vec<&'a str>) -> Result<Self, Box<dyn Error>> {
         // Verify that it's not empty
-        if !value.is_empty() {
-            debug!("Value is not empty, proceeding");
+        debug!("Verifying that command is not empty");
+        if !command.is_empty() {
+            debug!("command is not empty, proceeding");
             let mut program = String::new();
             // Extract the first word then remove it
-            program.push_str(value[0]);
-            value.remove(0);
-            // Clone the rest of the value
-            let args = value.clone();
-            debug!("return Comm");
-            Ok(Self {
-                value,
-                program,
-                args,
-            })
+            program.push_str(command[0]);
+            command.remove(0);
+            // Copy the rest of the value
+            let args = command;
+            debug!("Return Commmand struct");
+            Ok(Self { program, args })
         } else {
-            debug!("Value is empty");
-            Err("Value is empty")
+            debug!("Command is empty");
+            Err(From::from("Command is empty"))
         }
     }
 }
@@ -52,21 +49,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_comm_new() -> Result<(), &'static str> {
-        let comm = Comm::new(vec!["test"]);
-        if comm.is_ok() {
+    fn test_command_new() -> Result<(), Box<dyn Error>> {
+        let command = Command::new(vec!["test"]);
+        if command.is_ok() {
             Ok(())
         } else {
-            Err("Test failed")
+            Err(From::from("Test failed to create struct"))
         }
     }
     #[test]
-    fn test_comm_new_empty() -> Result<(), &'static str> {
-        let comm = Comm::new(vec![]);
-        if comm.is_err() {
+    fn test_command_new_empty() -> Result<(), Box<dyn Error>> {
+        let command = Command::new(vec![]);
+        if command.is_err() {
             Ok(())
         } else {
-            Err("Test failed")
+            Err(From::from("Test failed to see an empty vec"))
+        }
+    }
+    #[test]
+    fn test_command_new_full() -> Result<(), Box<dyn Error>> {
+        let command = Command::new(vec!["test", "command", "full"])?;
+        if command.program == "test" && command.args == vec!["command", "full"] {
+            Ok(())
+        } else {
+            Err(From::from("Test failed to reproduced struct"))
         }
     }
 }
