@@ -17,7 +17,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::error::Error;
-use std::fs::{self, File, DirBuilder};
+use std::fs::{self, DirBuilder, File};
 use std::io::{Read, Write};
 use std::os::unix::fs::DirBuilderExt;
 use std::os::unix::fs::PermissionsExt;
@@ -49,7 +49,10 @@ impl Token {
         debug!("Creating token_path");
         let token_path = format!("{}{}{}", SESSION_DIR, username, self.tty_name);
         let token_path = Path::new(&token_path);
-        debug!("token_path has been create, will verify if it exist : {:?}", token_path);
+        debug!(
+            "token_path has been create, will verify if it exist : {:?}",
+            token_path
+        );
         if !token_path.exists() {
             debug!("token_path doesn't exist, will create it");
             let path = token_path.parent().unwrap();
@@ -106,7 +109,10 @@ pub fn create_dir_run(username: &str) -> Result<(), Box<dyn Error>> {
     debug!("Verify that run_path exist");
     if !run_path.exists() {
         debug!("run_path doesn't exist, creating it");
-        DirBuilder::new().mode(0o600).recursive(true).create(SESSION_DIR)?;
+        DirBuilder::new()
+            .mode(0o600)
+            .recursive(true)
+            .create(SESSION_DIR)?;
     }
     let metadata = fs::metadata(SESSION_DIR)?;
     let mut perms = metadata.permissions();
@@ -122,7 +128,10 @@ pub fn create_dir_run(username: &str) -> Result<(), Box<dyn Error>> {
     debug!("Verifying that user_path exist: {:?}", user_path);
     if !user_path.exists() {
         debug!("user_path doesn't exist, creating it");
-        DirBuilder::new().mode(0o600).recursive(true).create(user_path)?;
+        DirBuilder::new()
+            .mode(0o600)
+            .recursive(true)
+            .create(user_path)?;
     } else if user_path.is_file() {
         error!("Error: {:?} is not a directory", user_path);
         let err = format!("Error: {:?} is not a directory", user_path);

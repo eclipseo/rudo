@@ -23,8 +23,8 @@ use crate::user;
 use pam_client::conv_cli::Conversation;
 use pam_client::{Context, Flag};
 use std::error::Error;
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 static SESSION_DIR: &str = "/run/rudo/";
 
