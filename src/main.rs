@@ -16,6 +16,8 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate serde;
 
 mod cli;
 mod config;
@@ -24,29 +26,21 @@ mod journal;
 use std::error::Error;
 use std::path::Path;
 
+static JOURNALD_PATH: &str = "/run/systemd/journal/";
+
 fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the cli interface with clap
     let matches = cli::init_cli();
-    let log = matches.is_present("debug");
+    let debug = matches.is_present("debug");
 
-    if Path::new("/run/systemd/journal/").exists() {
-        journal::log_journald(log)?;
+    if Path::new(JOURNALD_PATH).exists() {
+        journal::log_journald(debug)?;
     } else {
         eprintln!("Missing journald file");
     }
 
-    // Decide witch option to run with CLI
-    if matches.is_present("shell") {
-        // Run the shell
-        debug!("Shell command detect");
-        rudo::run_shell(matches)?;
-        debug!("Shell finish");
-    } else if matches.is_present("command") {
-        // Run the command
-        debug!("Run the supply command");
-        rudo::run_command(matches)?;
-        debug!("Command finish")
-    }
+    rudo::run(matches)?;
+
     // End of program
     info!("End of program");
     Ok(())

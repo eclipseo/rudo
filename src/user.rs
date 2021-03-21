@@ -15,8 +15,8 @@
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-use std::sync::Arc;
 use std::error::Error;
+use std::sync::Arc;
 use users::{Group, Users, UsersCache};
 
 // Stock the User and is value for later use
@@ -29,10 +29,11 @@ pub struct User {
 
 impl User {
     // Create the user and it's data for later use
-    pub fn new(usersdata: &UsersCache) -> User {
+    pub fn new() -> User {
         debug!("Begin user creation");
-        let uid = usersdata.get_current_uid();
-        let user = usersdata.get_user_by_uid(uid).unwrap();
+        let userscache = UsersCache::new();
+        let uid = userscache.get_current_uid();
+        let user = userscache.get_user_by_uid(uid).unwrap();
         let username = user.name().to_str().unwrap().to_string();
         let group = user.groups().unwrap();
         debug!("User create");
@@ -69,11 +70,11 @@ impl User {
         }
 
         if count == 1 {
-            debug!("User is a member of authorized group");
+            info!("User is a member of authorized group");
             println!("You are a member of the group {}", arggroup);
             Ok(())
         } else {
-            debug!("User is not a member of authorized group");
+            info!("User is not a member of authorized group");
             let error = "You are not a member of group ";
             error.to_string().push_str(arggroup);
             Err(From::from(error))
@@ -87,8 +88,7 @@ mod tests {
 
     #[test]
     fn test_verify_group() -> Result<(), Box<dyn Error>> {
-        let userscache = UsersCache::new();
-        let userdata = User::new(&userscache);
+        let userdata = User::new();
         if userdata.verify_group("test").is_err() {
             Ok(())
         } else {
@@ -97,8 +97,7 @@ mod tests {
     }
     #[test]
     fn test_verify_user() -> Result<(), Box<dyn Error>> {
-        let userscache = UsersCache::new();
-        let userdata = User::new(&userscache);
+        let userdata = User::new();
         if userdata.verify_user("test").is_err() {
             Ok(())
         } else {
