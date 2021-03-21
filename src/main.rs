@@ -39,9 +39,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         eprintln!("Missing journald file");
     }
 
+    debug!("Begin of program");
     rudo::run(matches)?;
+    debug!("End of program");
 
     // End of program
-    info!("End of program");
     Ok(())
 }
