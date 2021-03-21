@@ -16,10 +16,33 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use crate::config;
+use crate::session;
+use crate::tty;
 use crate::user;
+
 use pam_client::conv_cli::Conversation;
 use pam_client::{Context, Flag};
 use std::error::Error;
+use std::path::Path;
+use std::fs;
+
+static SESSION_DIR: &str = "/run/rudo/";
+
+pub fn authentification(
+    conf: &config::Config,
+    userdata: &user::User,
+) -> Result<(), Box<dyn Error>> {
+    // Verify that the user is authorize to run rudo
+    debug!("User verification begin");
+    userdata.verify_user(conf.userlist.as_str())?;
+    debug!("User verification finish");
+
+    // Verify that the user is a member of the privilege group for privilege access
+    debug!("Group verification begin");
+    userdata.verify_group(conf.group.as_str())?;
+    debug!("Group verification finish");
+    Ok(())
+}
 
 pub fn auth_pam(
     conf: &config::Config,
@@ -34,28 +57,72 @@ pub fn auth_pam(
     )?;
     debug!("Pam context create");
 
-    // Don't ask for password if false in the conf
-    info!("{} demand authorization to use rudo", userdata.username);
-    if conf.password {
-        // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
-        debug!("Password ask");
-        let mut count = 0;
-        while count < 3 {
-            match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
-                Ok(()) => break,
-                Err(err) => {
-                    eprintln!("Error: {}", err);
-                    count += 1
-                }
+    debug!("extract tty name");
+    let tty_name = tty::get_tty_name()?;
+    debug!("tty name has been extract");
+
+    debug!("token_path will be create");
+    let token_path = format!("{}{}{}", SESSION_DIR, &userdata.username, tty_name);
+    let token_path = Path::new(&token_path);
+    debug!("token_path has been create: {:?}", token_path);
+
+    let mut result = false;
+    debug!("Verifying if token_path exist");
+    if token_path.exists() && token_path.is_file() {
+        debug!("Token will be read from file");
+        let token = session::read_token_file(token_path.to_str().unwrap())?;
+        debug!("Token has been read from file");
+        result = match token.verify_token(&tty_name) {
+            Ok(()) => true,
+            Err(err) => {
+                info!("{}", err);
+                false
             }
-        }
-        debug!("Password give");
+        };
+    } else if token_path.exists() && token_path.is_dir() {
+        debug!("token_path is a directory and will be erase");
+        fs::remove_dir(token_path)?;
     }
 
-    // Validate the account (is not locked, expired, etc.)
-    debug!("Validate the account");
-    context.acct_mgmt(Flag::DISALLOW_NULL_AUTHTOK)?;
-    debug!("Account validate");
+    debug!("Asking for password if token is invalid");
+    if !result {
+        // Don't ask for password if false in the conf
+        info!("{} demand authorization to use rudo", userdata.username);
+        if conf.password {
+            // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
+            debug!("Password will be ask");
+            let mut count = 0;
+            while count < 3 {
+                match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
+                    Ok(()) => break,
+                    Err(err) => {
+                        info!("Password was incorrect");
+                        eprintln!("Error: {}", err);
+                        count += 1
+                    }
+                }
+            }
+            info!("Password was given and validate");
+        }
+        // Validate the account (is not locked, expired, etc.)
+        debug!("Validate the account");
+        context.acct_mgmt(Flag::DISALLOW_NULL_AUTHTOK)?;
+        debug!("Account validate");
+
+        debug!("Creating run directory");
+        session::create_dir_run(&userdata.username)?;
+        debug!("Run directory has been create");
+
+        debug!("Getting tty name");
+        let tty_name = tty::get_tty_name()?;
+        debug!("tty name was get");
+
+        debug!("Creating a new Token");
+        let token = session::Token::new(tty_name);
+        debug!("Token was create. Will write it to file");
+        token.create_token_file(&userdata.username)?;
+        debug!("Token was writing to file");
+    }
 
     // Change the user to root to have privilege access
     debug!("Change the user");

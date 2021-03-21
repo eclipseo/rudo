@@ -7,6 +7,7 @@ rudo_sources = [
   'config.rs',
   'journal.rs',
   'session.rs',
+  'tty.rs',
   'user.rs',
 ]
 
