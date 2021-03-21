@@ -51,9 +51,11 @@ impl Config {
     }
     pub fn update(mut self, matches: &ArgMatches) -> Self {
         if matches.value_of("user").is_some() {
+            debug!("User value will be update");
             self.user = matches.value_of("user").unwrap().to_string();
         }
         if matches.is_present("greeting") {
+            debug!("greeting value will be update");
             self.greeting = true;
         }
         self
@@ -87,7 +89,8 @@ pub fn init_conf(path: &PathBuf) -> Result<Config, Box<dyn Error>> {
         config.load(path.to_str().unwrap())?;
         debug!("Finish loading");
     } else if path.exists() && path.is_dir() {
-        return Err(From::from("Error /etc/Rudo.conf is a directory"));
+        error!("Error: /etc/rudo.conf is a directory");
+        return Err(From::from("Error: /etc/Rudo.conf is a directory"));
     } else if !path.exists() {
         debug!("/etc/rudo.conf doesnt exist! Creating it");
         eprintln!("/etc/rudo.conf doesnt exist! Creating it");
