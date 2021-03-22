@@ -32,6 +32,8 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .help("Pass the command to execute")
                 .conflicts_with("shell")
                 .required_unless("shell")
+                .conflicts_with("edit")
+                .required_unless("edit")
                 .index(1) // Be sure that the command is the first so we dont have to write "-c" to take a command
                 .multiple(true) // To be able to have the command and it's list of argument
                 .takes_value(true),
@@ -44,6 +46,8 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .help("Initialize a privilege shell")
                 .conflicts_with("command")
                 .required_unless("command")
+                .conflicts_with("edit")
+                .required_unless("edit")
                 .takes_value(false),
         )
         .arg(
@@ -69,6 +73,18 @@ pub fn init_cli() -> ArgMatches<'static> {
                 .value_name("debug")
                 .help("Log debug messages")
                 .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("edit")
+                .short("e")
+                .long("edit")
+                .value_name("edit")
+                .help("Edit a document with the editor of user")
+                .conflicts_with("command")
+                .required_unless("command")
+                .conflicts_with("shell")
+                .required_unless("shell")
+                .takes_value(true),
         )
         .get_matches();
     matches

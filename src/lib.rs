@@ -31,6 +31,7 @@ use pam_client::Flag;
 use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
+use std::env;
 
 static CONFIG_PATH: &str = "/etc/rudo.conf";
 
@@ -94,7 +95,7 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         debug!("End of the supply command");
     } else if matches.is_present("shell") {
         // Run a process in the PAM environment and create a new shell
-        info!("{} has been authorized. Shell granted", userdata.username);
+        info!("{} has been authorized to use {}", userdata.username, conf.shell);
         debug!("Starting shell");
         let mut child = Command::new(conf.shell)
             .arg("-l") // Login shell
@@ -106,6 +107,19 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         // Wait for the command to finish or the terminal end before
         child.wait()?;
         debug!("End of the shell");
+    } else if matches.is_present("edit") {
+        let editor = env::var("EDITOR")?;
+        let arg = matches.value_of("edit").unwrap();
+        info!("{} has been authorized to use {}", userdata.username, editor);
+        debug!("Starting editor");
+        let mut child = Command::new(editor)
+            .arg(arg)
+            .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
+            .spawn()?;
+
+        // Wait for the command to finish or the terminal end before
+        child.wait()?;
+        debug!("End of the editor");
     }
 
     Ok(())
