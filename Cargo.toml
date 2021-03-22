@@ -10,7 +10,7 @@ description = "A utility to gain privilege access on unix system with pam"
 readme = "README.md"
 keywords = ["cli", "sudo"]
 categories = ["authentication", "command-line-utilities"]
-include = ["src/", "conf/", "build-aux/", "LICENSE", "README.md", "Cargo.toml", "Cargo.lock", "meson.build"]
+include = ["src/", "conf/", "build-aux/", "LICENSE", "README.md", "Cargo.toml", "Cargo.lock", "meson.build", "rust2rpm.conf"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
