@@ -32,6 +32,7 @@ use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
 use std::env;
+use std::os::unix::process::CommandExt;
 
 static CONFIG_PATH: &str = "/etc/rudo.conf";
 
@@ -51,6 +52,12 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     debug!("User information extract");
     let userdata = user::User::new();
     debug!("User extraction finish");
+
+    debug!("Extract uid and gid of the impersonate user");
+    let impuser = users::get_user_by_name(&conf.user).unwrap();
+    let impuser_uid = impuser.uid();
+    let impuser_gid = impuser.primary_group_id();
+    debug!("Extraction finish");
 
     // Greeting to the user
     if conf.greeting {
@@ -88,6 +95,8 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         let mut child = Command::new(data.program)
             .args(data.args)
             .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
+            .uid(impuser_uid) // Necessary to have full access
+            .gid(impuser_gid) // Necessary to have full access
             .spawn()?;
 
         // Wait for the command to finish or the terminal end before
@@ -100,8 +109,9 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         let mut child = Command::new(conf.shell)
             .arg("-l") // Login shell
             .arg("-p") // Necessary to have privilege in the new shell
-            .env_clear() // Clear env of the user
             .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
+            .uid(impuser_uid) // Necessary to have full access
+            .gid(impuser_gid) // Necessary to have full access
             .spawn()?;
 
         // Wait for the command to finish or the terminal end before
@@ -115,6 +125,8 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         let mut child = Command::new(editor)
             .arg(arg)
             .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
+            .uid(impuser_uid) // Necessary to have full access
+            .gid(impuser_gid) // Necessary to have full access
             .spawn()?;
 
         // Wait for the command to finish or the terminal end before
