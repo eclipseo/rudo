@@ -22,7 +22,6 @@ use crate::user;
 
 use pam_client::conv_cli::Conversation;
 use pam_client::{Context, Flag};
-use std::env;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
@@ -70,11 +69,8 @@ pub fn auth_pam(
     let mut result = false;
     debug!("Verifying if token_path exist");
     if token_path.exists() && token_path.is_file() {
-        debug!("Will determine your desktop with env");
-        let desktop = env::var("XDG_CURRENT_DESKTOP")?;
-        debug!("Desktop is {}", desktop);
         debug!("Will determine uuid of the terminal");
-        let tty_uuid = tty::tty_uuid(desktop)?;
+        let tty_uuid = tty::tty_uuid()?;
         debug!("Terminal uuid is {}", tty_uuid);
 
         debug!("Token will be read from file");
@@ -128,11 +124,8 @@ pub fn auth_pam(
         let tty_name = tty::get_tty_name()?;
         debug!("tty name was get");
 
-        debug!("Will determine your desktop with env");
-        let desktop = env::var("XDG_CURRENT_DESKTOP")?;
-        debug!("Desktop is {}", desktop);
         debug!("Will determine uuid of the terminal");
-        let tty_uuid = tty::tty_uuid(desktop)?;
+        let tty_uuid = tty::tty_uuid()?;
         debug!("Terminal uuid is {}", tty_uuid);
 
         debug!("Creating a new Token");

@@ -20,14 +20,11 @@ pub fn get_tty_name() -> Result<String, Box<dyn Error>> {
     }
 }
 
-pub fn tty_uuid(desktop: String) -> Result<String, Box<dyn Error>> {
-    if desktop.to_lowercase() == "gnome" {
+pub fn tty_uuid() -> Result<String, Box<dyn Error>> {
+    if env::var("GNOME_TERMINAL_SCREEN").is_ok() {
         let uuid = env::var("GNOME_TERMINAL_SCREEN")?;
         return Ok(uuid);
     }
-    error!(
-        "Couldn't determine the terminal uuid for desktop {}",
-        desktop
-    );
+    error!("Couldn't determine the terminal uuid");
     Err(From::from("Couldn't determine the terminal uuid"))
 }
