@@ -28,11 +28,11 @@ mod user;
 
 use clap::ArgMatches;
 use pam_client::Flag;
+use std::env;
 use std::error::Error;
+use std::os::unix::process::CommandExt;
 use std::path::PathBuf;
 use std::process::Command;
-use std::env;
-use std::os::unix::process::CommandExt;
 
 static CONFIG_PATH: &str = "/etc/rudo.conf";
 
@@ -104,7 +104,10 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         debug!("End of the supply command");
     } else if matches.is_present("shell") {
         // Run a process in the PAM environment and create a new shell
-        info!("{} has been authorized to use {}", userdata.username, conf.shell);
+        info!(
+            "{} has been authorized to use {}",
+            userdata.username, conf.shell
+        );
         debug!("Starting shell");
         let mut child = Command::new(conf.shell)
             .arg("-l") // Login shell
@@ -120,7 +123,10 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     } else if matches.is_present("edit") {
         let editor = env::var("EDITOR")?;
         let arg = matches.value_of("edit").unwrap();
-        info!("{} has been authorized to use {}", userdata.username, editor);
+        info!(
+            "{} has been authorized to use {}",
+            userdata.username, editor
+        );
         debug!("Starting editor");
         let mut child = Command::new(editor)
             .arg(arg)

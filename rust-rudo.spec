@@ -4,7 +4,7 @@
 %global crate rudo
 
 Name:           rust-%{crate}
-Version:        0.3.1
+Version:        0.4.0
 Release:        1%{?dist}
 Summary:        Utility to gain privilege access on unix system with pam
 
