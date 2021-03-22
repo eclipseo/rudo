@@ -19,6 +19,7 @@ BuildArch:      noarch
 %endif
 
 Requires: pam
+Requires: systemd-libs
 
 BuildRequires:  rust-packaging
 BuildRequires:  openssl-devel
