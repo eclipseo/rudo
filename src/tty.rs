@@ -66,7 +66,7 @@ pub fn tty_uuid() -> Result<String, Box<dyn Error>> {
         }
         Ok(uuid)
     } else {
-    error!("Couldn't determine the terminal uuid");
-    Err(From::from("Couldn't determine the terminal uuid"))
-}
+        error!("Couldn't determine the terminal uuid");
+        Err(From::from("Couldn't determine the terminal uuid"))
+    }
 }

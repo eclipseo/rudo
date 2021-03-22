@@ -77,14 +77,14 @@ pub fn auth_pam(
         let token = session::read_token_file(token_path.to_str().unwrap());
 
         if token.is_ok() {
-        debug!("Token has been read from file");
-        result = match token.unwrap().verify_token(&tty_name, tty_uuid) {
-            Ok(()) => true,
-            Err(err) => {
-                info!("{}", err);
-                false
-            }
-        };
+            debug!("Token has been read from file");
+            result = match token.unwrap().verify_token(&tty_name, tty_uuid) {
+                Ok(()) => true,
+                Err(err) => {
+                    info!("{}", err);
+                    false
+                }
+            };
         }
     } else if token_path.exists() && token_path.is_dir() {
         debug!("token_path is a directory and will be erase");
