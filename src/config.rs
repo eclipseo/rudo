@@ -163,20 +163,4 @@ mod tests {
             Err(From::from("Test failed to create Config struct"))
         }
     }
-    #[test]
-    fn test_init_conf() -> Result<(), Box<dyn Error>> {
-        let path = PathBuf::from("rudo.conf");
-        let conf = init_conf(&path)?;
-        if conf.user == "root"
-            && conf.group == "wheel"
-            && conf.password
-            && conf.shell == "/bin/bash"
-            && conf.userlist == "root"
-            && conf.greeting
-        {
-            Ok(())
-        } else {
-            Err(From::from("test failed to reproduced Config struct"))
-        }
-    }
 }
