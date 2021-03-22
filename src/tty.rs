@@ -1,4 +1,5 @@
 use libc::{isatty, ttyname};
+use std::env;
 use std::error::Error;
 use std::ffi::CStr;
 
@@ -17,4 +18,16 @@ pub fn get_tty_name() -> Result<String, Box<dyn Error>> {
         let ttyname_rust = CStr::from_ptr(ttyname_c).to_string_lossy().into_owned();
         Ok(ttyname_rust)
     }
+}
+
+pub fn tty_uuid(desktop: String) -> Result<String, Box<dyn Error>> {
+    if desktop.to_lowercase() == "gnome" {
+        let uuid = env::var("GNOME_TERMINAL_SCREEN")?;
+        return Ok(uuid);
+    }
+    error!(
+        "Couldn't determine the terminal uuid for desktop {}",
+        desktop
+    );
+    Err(From::from("Couldn't determine the terminal uuid"))
 }

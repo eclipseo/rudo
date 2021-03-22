@@ -30,17 +30,19 @@ static SESSION_DIR: &str = "/run/rudo/";
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Token {
     tty_name: String,
+    tty_uuid: String,
     timestamp: SystemTime,
     final_timestamp: SystemTime,
 }
 
 impl Token {
-    pub fn new(tty_name: String) -> Self {
+    pub fn new(tty_name: String, tty_uuid: String) -> Self {
         let timestamp = SystemTime::now();
         let duration = std::time::Duration::from_secs(DEFAULT_SESSION_TIMEOUT);
         let final_timestamp = timestamp.checked_add(duration).unwrap();
         Self {
             tty_name,
+            tty_uuid,
             timestamp,
             final_timestamp,
         }
@@ -90,12 +92,12 @@ impl Token {
         }
         Ok(())
     }
-    pub fn verify_token(&self, tty_name: &str) -> Result<(), Box<dyn Error>> {
+    pub fn verify_token(&self, tty_name: &str, tty_uuid: String) -> Result<(), Box<dyn Error>> {
         let clock = SystemTime::now();
         if self.final_timestamp <= clock {
             info!("Session has expired");
             Err(From::from("Session has expired"))
-        } else if self.tty_name == tty_name {
+        } else if self.tty_name == tty_name && self.tty_uuid == tty_uuid {
             Ok(())
         } else {
             info!("Not the same session");

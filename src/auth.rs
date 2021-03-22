@@ -22,6 +22,7 @@ use crate::user;
 
 use pam_client::conv_cli::Conversation;
 use pam_client::{Context, Flag};
+use std::env;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
@@ -69,10 +70,17 @@ pub fn auth_pam(
     let mut result = false;
     debug!("Verifying if token_path exist");
     if token_path.exists() && token_path.is_file() {
+        debug!("Will determine your desktop with env");
+        let desktop = env::var("XDG_CURRENT_DESKTOP")?;
+        debug!("Desktop is {}", desktop);
+        debug!("Will determine uuid of the terminal");
+        let tty_uuid = tty::tty_uuid(desktop)?;
+        debug!("Terminal uuid is {}", tty_uuid);
+
         debug!("Token will be read from file");
         let token = session::read_token_file(token_path.to_str().unwrap())?;
         debug!("Token has been read from file");
-        result = match token.verify_token(&tty_name) {
+        result = match token.verify_token(&tty_name, tty_uuid) {
             Ok(()) => true,
             Err(err) => {
                 info!("{}", err);
@@ -117,8 +125,15 @@ pub fn auth_pam(
         let tty_name = tty::get_tty_name()?;
         debug!("tty name was get");
 
+        debug!("Will determine your desktop with env");
+        let desktop = env::var("XDG_CURRENT_DESKTOP")?;
+        debug!("Desktop is {}", desktop);
+        debug!("Will determine uuid of the terminal");
+        let tty_uuid = tty::tty_uuid(desktop)?;
+        debug!("Terminal uuid is {}", tty_uuid);
+
         debug!("Creating a new Token");
-        let token = session::Token::new(tty_name);
+        let token = session::Token::new(tty_name, tty_uuid);
         debug!("Token was create. Will write it to file");
         token.create_token_file(&userdata.username)?;
         debug!("Token was writing to file");
