@@ -85,5 +85,5 @@ which use "default" feature of "%{crate}" crate.
 %endif
 
 %changelog
-* Sun Mar 14 12:04:36 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.2.0-1
+* Mon Mar 22 16:35:52 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.4.0-1
 - Initial package
