@@ -67,6 +67,42 @@ which use "default" feature of "%{crate}" crate.
 %files       -n %{name}+default-devel
 %ghost %{cargo_registry}/%{crate}-%{version_no_tilde}/Cargo.toml
 
+%package     -n %{name}+journald-devel
+Summary:        %{summary}
+BuildArch:      noarch
+
+%description -n %{name}+journald-devel %{_description}
+
+This package contains library source intended for building other packages
+which use "journald" feature of "%{crate}" crate.
+
+%files       -n %{name}+journald-devel
+%ghost %{cargo_registry}/%{crate}-%{version_no_tilde}/Cargo.toml
+
+%package     -n %{name}+log-devel
+Summary:        %{summary}
+BuildArch:      noarch
+
+%description -n %{name}+log-devel %{_description}
+
+This package contains library source intended for building other packages
+which use "log" feature of "%{crate}" crate.
+
+%files       -n %{name}+log-devel
+%ghost %{cargo_registry}/%{crate}-%{version_no_tilde}/Cargo.toml
+
+%package     -n %{name}+systemd-devel
+Summary:        %{summary}
+BuildArch:      noarch
+
+%description -n %{name}+systemd-devel %{_description}
+
+This package contains library source intended for building other packages
+which use "systemd" feature of "%{crate}" crate.
+
+%files       -n %{name}+systemd-devel
+%ghost %{cargo_registry}/%{crate}-%{version_no_tilde}/Cargo.toml
+
 %prep
 %autosetup -n %{crate}-%{version_no_tilde} -p1
 %cargo_prep
@@ -86,5 +122,5 @@ which use "default" feature of "%{crate}" crate.
 %endif
 
 %changelog
-* Mon Mar 22 16:35:52 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.4.0-1
+* Mon Mar 22 20:24:31 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.4.0-1
 - Initial package
