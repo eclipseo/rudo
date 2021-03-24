@@ -19,12 +19,8 @@ BuildArch:      noarch
 %endif
 
 Requires: pam
-Requires: systemd-libs
 
 BuildRequires:  rust-packaging
-BuildRequires:  openssl-devel
-BuildRequires:  pam-devel
-BuildRequires:  systemd-devel
 
 %global _description %{expand:
 Utility to gain privilege access on unix system with pam.}
