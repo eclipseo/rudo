@@ -4,7 +4,7 @@
 %global crate rudo
 
 Name:           rust-%{crate}
-Version:        0.4.0
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        Utility to gain privilege access on unix system with pam
 
@@ -118,5 +118,5 @@ which use "systemd" feature of "%{crate}" crate.
 %endif
 
 %changelog
-* Mon Mar 22 23:27:16 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.4.0-1
+* Mon Mar 22 23:27:16 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.5.0-1
 - Initial package
