@@ -10,16 +10,15 @@ description = "A utility to gain privilege access on unix system with pam"
 readme = "README.md"
 keywords = ["cli", "sudo"]
 categories = ["authentication", "command-line-utilities"]
-include = ["src/", "conf/", "build-aux/", "LICENSE", "README.md", "Cargo.toml", "Cargo.lock", "meson.build", "rust2rpm.conf"]
+include = ["src/", "conf/", "build-aux/", "LICENSE", "README.md", "Cargo.toml", "Cargo.lock", "meson.build"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde_yaml = "0.8"
 libc = "0.2"
 clap = "2.33"
 users = "0.11"
 pam-client = "0.3"
-configparser = "2.0"
 log = { version = "0.4", optional = true}
 systemd = { version = "0.8", optional = true}
 

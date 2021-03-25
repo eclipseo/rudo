@@ -45,15 +45,19 @@ impl User {
         }
     }
     // Verify that the user is part of the list of authorized users
-    pub fn verify_user(&self, userlist: &str) -> Result<(), Box<dyn Error>> {
+    pub fn verify_user(&self, userlist: &Vec<String>) -> Result<(), Box<dyn Error>> {
         debug!("Begin to verify user");
         let username = self.user.name().to_str().unwrap();
-        if userlist.contains(username) {
-            debug!("User is authorize");
+        let mut count = 0;
+        for usr in userlist {
+            if usr == username {
+                count += 1;
+            }
+        }
+        if count == 1 {
             Ok(())
         } else {
-            debug!("User is not authorize");
-            Err(From::from("You are not part of the authorized users"))
+            Err(From::from("User not authorized"))
         }
     }
     // Take the vector containing the Group and search for the group supply in the configuration
@@ -98,7 +102,7 @@ mod tests {
     #[test]
     fn test_verify_user() -> Result<(), Box<dyn Error>> {
         let userdata = User::new();
-        if userdata.verify_user("test").is_err() {
+        if userdata.verify_user(&vec![String::from("test")]).is_err() {
             Ok(())
         } else {
             Err(From::from("The user should not correspond with test"))

@@ -31,16 +31,12 @@ use pam_client::Flag;
 use std::env;
 use std::error::Error;
 use std::os::unix::process::CommandExt;
-use std::path::PathBuf;
 use std::process::Command;
-
-static CONFIG_PATH: &str = "/etc/rudo.conf";
 
 pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     // Initialize rudo.conf configuration
     debug!("Start configuration with rudo.conf");
-    let path = PathBuf::from(CONFIG_PATH);
-    let conf = config::init_conf(&path)?;
+    let conf = config::init_conf()?;
     debug!("Configuration has been initialize");
 
     // Update configuration if necessary as CLI as the priority
@@ -103,13 +99,11 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         child.wait()?;
         debug!("End of the supply command");
     } else if matches.is_present("shell") {
+        let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/bin/sh"));
         // Run a process in the PAM environment and create a new shell
-        info!(
-            "{} has been authorized to use {}",
-            userdata.username, conf.shell
-        );
+        info!("{} has been authorized to use {}", userdata.username, shell);
         debug!("Starting shell");
-        let mut child = Command::new(conf.shell)
+        let mut child = Command::new(shell)
             .arg("-l") // Login shell
             .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
             .uid(impuser_uid) // Necessary to have full access
