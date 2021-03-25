@@ -84,8 +84,8 @@ pub fn auth_pam(
                     info!("{}", err);
                     false
                 }
+            }
         }
-    }
     } else if token_path.exists() && token_path.is_dir() {
         debug!("token_path is a directory and will be erase");
         fs::remove_dir(token_path)?;

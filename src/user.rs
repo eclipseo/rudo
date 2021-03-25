@@ -51,7 +51,7 @@ impl User {
         let mut count = 0;
         for usr in userlist {
             if usr == username {
-            count += 1;
+                count += 1;
             }
         }
         if count == 1 {

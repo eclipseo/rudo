@@ -101,10 +101,7 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     } else if matches.is_present("shell") {
         let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/bin/sh"));
         // Run a process in the PAM environment and create a new shell
-        info!(
-            "{} has been authorized to use {}",
-            userdata.username, shell
-        );
+        info!("{} has been authorized to use {}", userdata.username, shell);
         debug!("Starting shell");
         let mut child = Command::new(shell)
             .arg("-l") // Login shell

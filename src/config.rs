@@ -16,12 +16,12 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use clap::ArgMatches;
-use serde::{Serialize, Deserialize};
-use std::fs::{self, File};
+use serde::{Deserialize, Serialize};
 use std::error::Error;
-use std::path::Path;
-use std::os::unix::fs::PermissionsExt;
+use std::fs::{self, File};
 use std::io::{Read, Write};
+use std::os::unix::fs::PermissionsExt;
+use std::path::Path;
 
 static CONFIG_PATH: &str = "/etc/rudo.conf";
 
