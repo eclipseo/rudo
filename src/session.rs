@@ -61,7 +61,7 @@ impl Token {
             debug!("Create directory: {:?}", path);
             DirBuilder::new().mode(0o600).recursive(true).create(path)?;
             debug!("Put Token in a string");
-            let token_file = serde_json::to_string(&self)?;
+            let token_file = serde_yaml::to_string(&self)?;
             debug!("creating the token file");
             let mut file = File::create(token_path)?;
             debug!("write the string in the file");
@@ -77,7 +77,7 @@ impl Token {
             debug!("token_path exist will erase it");
             fs::remove_file(token_path)?;
             debug!("Put Token in a string");
-            let token_file = serde_json::to_string(&self)?;
+            let token_file = serde_yaml::to_string(&self)?;
             debug!("creating the token file");
             let mut file = File::create(token_path)?;
             debug!("write the string in the file");
@@ -156,6 +156,6 @@ pub fn read_token_file(token_path: &str) -> Result<Token, Box<dyn Error>> {
     let mut buffer = String::new();
     file.read_to_string(&mut buffer)?;
 
-    let token: Token = serde_json::from_str(&buffer)?;
+    let token: Token = serde_yaml::from_str(&buffer)?;
     Ok(token)
 }

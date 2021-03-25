@@ -34,7 +34,7 @@ pub fn authentification(
 ) -> Result<(), Box<dyn Error>> {
     // Verify that the user is authorize to run rudo
     debug!("User verification begin");
-    userdata.verify_user(conf.userlist.as_str())?;
+    userdata.verify_user(&conf.userlist)?;
     debug!("User verification finish");
 
     // Verify that the user is a member of the privilege group for privilege access
