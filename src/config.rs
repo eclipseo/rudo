@@ -95,6 +95,8 @@ pub fn init_conf() -> Result<Config, Box<dyn Error>> {
         debug!("Loading /etc/rudo.conf");
         let result = conf.read_config_file();
         if let Err(err) = result {
+            eprintln!("{}", err);
+            error!("{}", err);
             fs::remove_file(path)?;
             let config = Config::default();
             config.create_config_file()?;

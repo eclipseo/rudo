@@ -102,7 +102,7 @@ mod tests {
     #[test]
     fn test_verify_user() -> Result<(), Box<dyn Error>> {
         let userdata = User::new();
-        if userdata.verify_user("test").is_err() {
+        if userdata.verify_user(&vec![String::from("test")]).is_err() {
             Ok(())
         } else {
             Err(From::from("The user should not correspond with test"))
