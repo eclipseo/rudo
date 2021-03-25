@@ -111,7 +111,6 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         debug!("Starting shell");
         let mut child = Command::new(conf.shell)
             .arg("-l") // Login shell
-            .arg("-p") // Necessary to have privilege in the new shell
             .envs(session.envlist().iter_tuples()) // Pass the pam session to the new proccess
             .uid(impuser_uid) // Necessary to have full access
             .gid(impuser_gid) // Necessary to have full access
