@@ -16,12 +16,12 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate serde;
 
 mod auth;
-mod cli;
 mod command;
 mod config;
-mod journal;
 mod session;
 mod tty;
 mod user;
@@ -99,6 +99,7 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         child.wait()?;
         debug!("End of the supply command");
     } else if matches.is_present("shell") {
+        debug!("Extracting shell environment variable");
         let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/bin/sh"));
         // Run a process in the PAM environment and create a new shell
         info!("{} has been authorized to use {}", userdata.username, shell);
@@ -114,7 +115,9 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         child.wait()?;
         debug!("End of the shell");
     } else if matches.is_present("edit") {
+        debug!("Extracting editor environment variable");
         let editor = env::var("EDITOR")?;
+        debug!("Extracting arguments give to the editor");
         let arg = matches.value_of("edit").unwrap();
         info!(
             "{} has been authorized to use {}",

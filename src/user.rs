@@ -45,7 +45,7 @@ impl User {
         }
     }
     // Verify that the user is part of the list of authorized users
-    pub fn verify_user(&self, userlist: &Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn verify_user(&self, userlist: &[String]) -> Result<(), Box<dyn Error>> {
         debug!("Begin to verify user");
         let username = self.user.name().to_str().unwrap();
         let mut count = 0;
@@ -57,6 +57,7 @@ impl User {
         if count == 1 {
             Ok(())
         } else {
+            error!("User not authorized");
             Err(From::from("User not authorized"))
         }
     }
@@ -78,7 +79,7 @@ impl User {
             println!("You are a member of the group {}", arggroup);
             Ok(())
         } else {
-            info!("User is not a member of authorized group");
+            error!("User is not a member of authorized group");
             let error = "You are not a member of group ";
             error.to_string().push_str(arggroup);
             Err(From::from(error))
@@ -102,7 +103,7 @@ mod tests {
     #[test]
     fn test_verify_user() -> Result<(), Box<dyn Error>> {
         let userdata = User::new();
-        if userdata.verify_user(&vec![String::from("test")]).is_err() {
+        if userdata.verify_user(&[String::from("test")]).is_err() {
             Ok(())
         } else {
             Err(From::from("The user should not correspond with test"))

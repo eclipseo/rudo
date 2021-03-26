@@ -16,7 +16,6 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use clap::ArgMatches;
-use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::{self, File};
 use std::io::{Read, Write};
@@ -37,9 +36,13 @@ pub struct Config {
 impl Config {
     fn create_config_file(&self) -> Result<(), Box<dyn Error>> {
         let config_path = Path::new(CONFIG_PATH);
+        debug!("Creating default data for config file");
         let config_file = serde_yaml::to_string(&self)?;
+        debug!("Creating config file at {}", CONFIG_PATH);
         let mut file = File::create(config_path)?;
+        debug!("Writing to file");
         file.write_all(&config_file.as_bytes())?;
+        debug!("Syncing data to drive");
         file.sync_all()?;
         debug!("Set file permission");
         let mut perms = file.metadata()?.permissions();
@@ -51,9 +54,12 @@ impl Config {
     }
     fn read_config_file(&self) -> Result<Self, Box<dyn Error>> {
         let config_path = Path::new(CONFIG_PATH);
+        debug!("Opening config file at {}", CONFIG_PATH);
         let mut file = File::open(config_path)?;
         let mut buffer = String::new();
+        debug!("Putting data in a string for futher use");
         file.read_to_string(&mut buffer)?;
+        debug!("Transform data to a struct with serde");
         let config: Config = serde_yaml::from_str(&buffer)?;
         Ok(config)
     }
@@ -84,35 +90,39 @@ impl Default for Config {
 // Initialize the configuration with rudo.conf or defaults
 pub fn init_conf() -> Result<Config, Box<dyn Error>> {
     // Initialize configuration
-    debug!("Begin initializing configuration");
+    debug!("Begin initializing default configuration");
     let mut conf = Config::default();
-    debug!("Finish initializing configuration");
+    debug!("Finish initializing default configuration");
 
     // Verify that the file is there or write to it with the defaults
     let path = Path::new(CONFIG_PATH);
     debug!("Verifying that {} exist", CONFIG_PATH);
     if path.exists() && path.is_file() {
-        debug!("Loading /etc/rudo.conf");
+        debug!("Loading {}", CONFIG_PATH);
         let result = conf.read_config_file();
         if let Err(err) = result {
             eprintln!("{}", err);
             error!("{}", err);
+            debug!("Removing file");
             fs::remove_file(path)?;
             let config = Config::default();
+            debug!("Creating new file with defaults");
             config.create_config_file()?;
             return Ok(config);
         } else {
+            debug!("Returning the content of the file");
             conf = result.unwrap();
         }
         debug!("Finish loading");
     } else if path.exists() && path.is_dir() {
-        error!("Error: /etc/rudo.conf is a directory");
-        return Err(From::from("Error: /etc/Rudo.conf is a directory"));
+        let err = format!("Error: {} is a directory", CONFIG_PATH);
+        error!("{}", err);
+        return Err(From::from(err));
     } else if !path.exists() {
-        debug!("/etc/rudo.conf doesnt exist! Creating it");
-        eprintln!("/etc/rudo.conf doesnt exist! Creating it");
+        debug!("{} doesnt exist! Creating it", CONFIG_PATH);
+        eprintln!("{} doesnt exist! Creating it", CONFIG_PATH);
         conf.create_config_file()?;
-        debug!("Creation finish");
+        debug!("Creation has finish");
     }
     Ok(conf)
 }

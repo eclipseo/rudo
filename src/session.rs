@@ -15,7 +15,6 @@
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::{self, DirBuilder, File};
 use std::io::{Read, Write};

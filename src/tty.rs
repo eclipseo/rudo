@@ -25,11 +25,13 @@ use std::ffi::CStr;
 pub fn get_tty_name() -> Result<String, Box<dyn Error>> {
     unsafe {
         if isatty(0) == 0 {
-            return Err(From::from("Rudo must currently be called from a TTY!"));
+            error!("Rudo must be called from a TTY!");
+            return Err(From::from("Rudo must be called from a TTY!"));
         }
         let ttyname_c = ttyname(0);
         // Verify that call didn't fail
         if ttyname_c.is_null() {
+            error!("ttyname() call failed!");
             return Err(From::from("ttyname() call failed!"));
         }
         let ttyname_rust = CStr::from_ptr(ttyname_c).to_string_lossy().into_owned();
@@ -62,6 +64,7 @@ pub fn tty_uuid() -> Result<String, Box<dyn Error>> {
     } else if env::var("WINDOWID").is_ok() {
         let uuid = env::var("WINDOWID")?;
         if uuid.parse::<u32>().unwrap() == 0 {
+            error!("Error: terminal has a uuid of zero");
             return Err(From::from("Error: terminal has a uuid of zero"));
         }
         Ok(uuid)

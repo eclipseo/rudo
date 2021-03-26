@@ -16,11 +16,8 @@
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #[macro_use]
 extern crate log;
-#[macro_use]
-extern crate serde;
 
 mod cli;
-mod config;
 mod journal;
 
 use std::error::Error;
@@ -36,7 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     if Path::new(JOURNALD_PATH).exists() {
         journal::log_journald(debug)?;
     } else {
-        eprintln!("Missing journald file");
+        eprintln!("Journald file not found");
     }
 
     debug!("Begin of program");
