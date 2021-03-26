@@ -118,5 +118,5 @@ which use "systemd" feature of "%{crate}" crate.
 %endif
 
 %changelog
-* Mon Mar 22 23:27:16 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.5.0-1
+* Fri Mar 26 00:17:39 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.5.0-1
 - Initial package
