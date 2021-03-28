@@ -21,6 +21,7 @@ BuildArch:      noarch
 Requires: pam
 
 BuildRequires:  rust-packaging
+BuildRequires:  pam-devel
 
 %global _description %{expand:
 Utility to gain privilege access on unix system with pam.}
@@ -35,7 +36,10 @@ Summary:        %{summary}
 
 %files       -n %{crate}
 %doc README.md
-%{_bindir}/rudo
+%license LICENSE
+%config(noreplace) %{_sysconfdir}/pam.d/rudo
+%ghost %{_sysconfdir}/rudo.conf
+%attr(4755,root,root) %{_bindir}/rudo
 %endif
 
 %package        devel
@@ -49,6 +53,7 @@ which use "%{crate}" crate.
 
 %files          devel
 %doc README.md
+%license LICENSE
 %{cargo_registry}/%{crate}-%{version_no_tilde}/
 
 %package     -n %{name}+default-devel
