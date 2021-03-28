@@ -105,7 +105,6 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         // Wait for the command to finish or the program end before the command
         child.wait()?;
         debug!("End of the supply command");
-
     } else if matches.is_present("shell") {
         // Extraction of the shell environment variable
         debug!("Extracting shell environment variable");
@@ -126,7 +125,6 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
         // Wait for the shell to finish or the program end before the shell
         child.wait()?;
         debug!("End of the shell");
-
     } else if matches.is_present("edit") {
         // Extraction of the editor environment variable
         debug!("Extracting editor environment variable");

@@ -120,7 +120,10 @@ impl Token {
         if self.final_timestamp <= clock {
             error!("Session has expired");
             Err(From::from("Session has expired"))
-        } else if self.tty_name == tty_name && self.tty_uuid == tty_uuid && self.final_timestamp > clock {
+        } else if self.tty_name == tty_name
+            && self.tty_uuid == tty_uuid
+            && self.final_timestamp > clock
+        {
             info!("Session is valid, will reuse it");
             Ok(())
         } else {
@@ -191,7 +194,10 @@ pub fn create_dir_run(username: &str) -> Result<(), Box<dyn Error>> {
 // Extract the token from the file with serde_yaml
 pub fn read_token_file(token_path: &str) -> Result<Token, Box<dyn Error>> {
     // Open the file and extract it's contents in a buffer
-    debug!("Open the file at {} and put it's content in a buffer", token_path);
+    debug!(
+        "Open the file at {} and put it's content in a buffer",
+        token_path
+    );
     let mut file = File::open(token_path)?;
     let mut buffer = String::new();
     file.read_to_string(&mut buffer)?;
