@@ -6,11 +6,10 @@
 [![GitHub issues](https://img.shields.io/github/issues/remilauzier/rudo?style=flat-square)](https://github.com/remilauzier/rudo/issues)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/remilauzier/rudo?style=flat-square)
 ![Lines of code](https://img.shields.io/tokei/lines/github/remilauzier/rudo?style=flat-square)
-[![GitHub license](https://img.shields.io/github/license/remilauzier/rudo?style=flat-square)](https://github.com/remilauzier/rudo/blob/main/LICENSE)
 # Description
 **Rudo** "RustUser do" allows a system administrator to give certain
 users (or groups of users) the ability to run some commands
-as **root** while logging all commands and arguments.
+as **root** or another user while logging all commands and arguments.
 
 # Functionality
 * You can give **Rudo** a command to execute like `rudo some-command with-args`
