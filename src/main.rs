@@ -28,18 +28,20 @@ static JOURNALD_PATH: &str = "/run/systemd/journal/";
 fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the cli interface with clap
     let matches = cli::init_cli();
+    // Extract debug logging variable for further use
     let debug = matches.is_present("debug");
 
+    // Verify that journald file exist
     if Path::new(JOURNALD_PATH).exists() {
+        // Use journald for logging
         journal::log_journald(debug)?;
     } else {
         eprintln!("Journald file not found");
     }
 
-    debug!("Begin of program");
+    debug!("Begin of run function");
     rudo::run(matches)?;
-    debug!("End of program");
+    debug!("End of run function");
 
-    // End of program
     Ok(())
 }

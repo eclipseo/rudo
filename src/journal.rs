@@ -19,8 +19,9 @@ use std::error::Error;
 use systemd::journal;
 
 pub fn log_journald(debug: bool) -> Result<(), Box<dyn Error>> {
-    // Initialize Logs
+    // Initialize Logs with journald
     journal::JournalLog::init()?;
+    // Determine the maximum level of log the user want
     if debug {
         log::set_max_level(LevelFilter::Debug);
         info!("Starting Debug logs");

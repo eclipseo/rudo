@@ -14,27 +14,31 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
 use libc::{isatty, ttyname};
 use std::env;
 use std::error::Error;
 use std::ffi::CStr;
 
 /// Safe wrapper to get the name of the current tty
-/// and return it as a Rust string
+/// and return it as a Rust string for further use
 pub fn get_tty_name() -> Result<String, Box<dyn Error>> {
     unsafe {
+        // Verify that we are indeed in a terminal
         if isatty(0) == 0 {
-            error!("Rudo must be called from a TTY!");
-            return Err(From::from("Rudo must be called from a TTY!"));
+            error!("Rudo must be called from a terminal!");
+            return Err(From::from("Rudo must be called from a terminal!"));
         }
+        // transform the fd to a c_char
         let ttyname_c = ttyname(0);
-        // Verify that call didn't fail
+
+        // Verify that there is indeed a c_char
         if ttyname_c.is_null() {
-            error!("ttyname() call failed!");
-            return Err(From::from("ttyname() call failed!"));
+            error!("Couldn't transform fd to c_char for ttyname");
+            return Err(From::from("Couldn't transform fd to c_char for ttyname"));
         }
+        // Transform the c_char to a rust string
         let ttyname_rust = CStr::from_ptr(ttyname_c).to_string_lossy().into_owned();
+        debug!("Terminal: {}", ttyname_rust);
         Ok(ttyname_rust)
     }
 }
@@ -48,21 +52,27 @@ pub fn get_tty_name() -> Result<String, Box<dyn Error>> {
 pub fn tty_uuid() -> Result<String, Box<dyn Error>> {
     if env::var("GNOME_TERMINAL_SCREEN").is_ok() {
         let uuid = env::var("GNOME_TERMINAL_SCREEN")?;
+        debug!("GNOME_TERMINAL_SCREEN: {}", uuid);
         Ok(uuid)
     } else if env::var("SHELL_SESSION_ID").is_ok() {
         let uuid = env::var("SHELL_SESSION_ID")?;
+        debug!("SHELL_SESSION_ID: {}", uuid);
         Ok(uuid)
     } else if env::var("TERMINATOR_UUID").is_ok() {
         let uuid = env::var("TERMINATOR_UUID")?;
+        debug!("TERMINATOR_UUID: {}", uuid);
         Ok(uuid)
     } else if env::var("TILIX_ID").is_ok() {
         let uuid = env::var("TILIX_ID")?;
+        debug!("TILIX_ID: {}", uuid);
         Ok(uuid)
     } else if env::var("ROXTERM_ID").is_ok() {
         let uuid = env::var("ROXTERM_ID")?;
+        debug!("ROXTERM_ID: {}", uuid);
         Ok(uuid)
     } else if env::var("WINDOWID").is_ok() {
         let uuid = env::var("WINDOWID")?;
+        debug!("WINDOWID: {}", uuid);
         if uuid.parse::<u32>().unwrap() == 0 {
             error!("Error: terminal has a uuid of zero");
             return Err(From::from("Error: terminal has a uuid of zero"));

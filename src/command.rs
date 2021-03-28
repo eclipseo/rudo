@@ -14,7 +14,6 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
 use std::error::Error;
 
 pub struct Command<'a> {
@@ -33,12 +32,13 @@ impl<'a> Command<'a> {
             // Extract the first word then remove it
             program.push_str(command[0]);
             command.remove(0);
-            // Copy the rest of the value
+            // Copy the rest of the value and return it
             let args = command;
             debug!("Return Commmand struct");
             Ok(Self { program, args })
         } else {
-            debug!("Command is empty");
+            // Error if the command is empty
+            error!("Command is empty");
             Err(From::from("Command is empty"))
         }
     }

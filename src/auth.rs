@@ -14,7 +14,6 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
 use crate::config;
 use crate::session;
 use crate::tty;
@@ -28,6 +27,7 @@ use std::path::Path;
 
 static SESSION_DIR: &str = "/run/rudo/";
 
+// Verify if the user is authorized before using pam
 pub fn authentification(
     conf: &config::Config,
     userdata: &user::User,
@@ -44,6 +44,7 @@ pub fn authentification(
     Ok(())
 }
 
+// Verify that the user is authorized with pam and if a precedent session is valid
 pub fn auth_pam(
     conf: &config::Config,
     userdata: &user::User,
@@ -57,25 +58,31 @@ pub fn auth_pam(
     )?;
     debug!("Pam context create");
 
+    // Extract the ttyname with libc
     debug!("extract tty name");
     let tty_name = tty::get_tty_name()?;
-    debug!("tty name has been extract");
+    debug!("tty name has been extract: {}", tty_name);
 
+    // Create the token path with the base, the username and the ttyname
     debug!("token_path will be create");
     let token_path = format!("{}{}{}", SESSION_DIR, &userdata.username, tty_name);
     let token_path = Path::new(&token_path);
     debug!("token_path has been create: {:?}", token_path);
 
+    // Verify if an existing token exist and act accordingly
     let mut result = false;
     debug!("Verifying if token_path exist");
     if token_path.exists() && token_path.is_file() {
+        // extract the uuid of the terminal for later use
         debug!("Will determine uuid of the terminal");
         let tty_uuid = tty::tty_uuid()?;
         debug!("Terminal uuid is {}", tty_uuid);
 
+        // Read the token file
         debug!("Token will be read from file");
         let token = session::read_token_file(token_path.to_str().unwrap());
 
+        // Verify if the token was valid and act accordingly
         if let Ok(token) = token {
             debug!("Token has been read from file");
             result = match token.verify_token(&tty_name, tty_uuid) {
@@ -87,14 +94,16 @@ pub fn auth_pam(
             }
         }
     } else if token_path.exists() && token_path.is_dir() {
-        debug!("token_path is a directory and will be erase");
+        // Erase the path if it's a directory
+        error!("token_path is a directory and will be erase");
         fs::remove_dir(token_path)?;
     }
 
+    // If the token was invalid ask for the password
     debug!("Asking for password if token is invalid");
     if !result {
-        // Don't ask for password if false in the conf
         info!("{} demand authorization to use rudo", userdata.username);
+        // Don't ask for password if false in the conf
         if conf.password {
             // Authenticate the user (ask for password, 2nd-factor token, fingerprint, etc.)
             debug!("Password will be ask");
@@ -103,7 +112,7 @@ pub fn auth_pam(
                 match context.authenticate(Flag::DISALLOW_NULL_AUTHTOK) {
                     Ok(()) => break,
                     Err(err) => {
-                        info!("Password was incorrect");
+                        error!("Password was incorrect");
                         eprintln!("Error: {}", err);
                         count += 1
                     }
@@ -116,29 +125,36 @@ pub fn auth_pam(
         context.acct_mgmt(Flag::DISALLOW_NULL_AUTHTOK)?;
         debug!("Account validate");
 
+        // Create the run directory where the token will be write
         debug!("Creating run directory");
         session::create_dir_run(&userdata.username)?;
         debug!("Run directory has been create");
 
+        // Extract the ttyname with libc
         debug!("Getting tty name");
         let tty_name = tty::get_tty_name()?;
-        debug!("tty name was get");
+        debug!("tty name was get: {}", tty_name);
 
+        // Extract the uuid of the terminal
         debug!("Will determine uuid of the terminal");
         let tty_uuid = tty::tty_uuid()?;
         debug!("Terminal uuid is {}", tty_uuid);
 
+        // Create token with all the necessary information
         debug!("Creating a new Token");
         let token = session::Token::new(tty_name, tty_uuid);
-        debug!("Token was create. Will write it to file");
+        debug!("Token was create");
+
+        // Write the token to file
+        debug!("Token will be writing to file");
         token.create_token_file(&userdata.username)?;
         debug!("Token was writing to file");
     }
 
-    // Change the user to root to have privilege access
-    debug!("Change the user");
+    // Change the user to have privilege access acordingly to the configuration of the user
+    debug!("Change the user as demand");
     context.set_user(Some(conf.user.as_str()))?;
-    debug!("User change");
+    info!("User change to: {}", conf.user);
 
     Ok(context)
 }

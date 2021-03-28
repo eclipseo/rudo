@@ -14,7 +14,6 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
 use clap::ArgMatches;
 use std::error::Error;
 use std::fs::{self, File};
@@ -35,15 +34,21 @@ pub struct Config {
 
 impl Config {
     fn create_config_file(&self) -> Result<(), Box<dyn Error>> {
+        // Create the path for the configuration
         let config_path = Path::new(CONFIG_PATH);
+        // Transform the struct to yaml
         debug!("Creating default data for config file");
         let config_file = serde_yaml::to_string(&self)?;
+        // Create the configuration file
         debug!("Creating config file at {}", CONFIG_PATH);
         let mut file = File::create(config_path)?;
+        // Write data in the file
         debug!("Writing to file");
         file.write_all(&config_file.as_bytes())?;
+        // Sync data to drive
         debug!("Syncing data to drive");
         file.sync_all()?;
+        // Set permisions of 600 to restreint access
         debug!("Set file permission");
         let mut perms = file.metadata()?.permissions();
         perms.set_mode(0o600);
@@ -53,23 +58,30 @@ impl Config {
         Ok(())
     }
     fn read_config_file(&self) -> Result<Self, Box<dyn Error>> {
+        // Create the path for the configuration
         let config_path = Path::new(CONFIG_PATH);
+        // Open the existing configuration file
         debug!("Opening config file at {}", CONFIG_PATH);
         let mut file = File::open(config_path)?;
-        let mut buffer = String::new();
+        // Put data in a buffer for later use
         debug!("Putting data in a string for futher use");
+        let mut buffer = String::new();
         file.read_to_string(&mut buffer)?;
+        // transform data to struct with serde
         debug!("Transform data to a struct with serde");
         let config: Config = serde_yaml::from_str(&buffer)?;
+        // Return the configuration
         Ok(config)
     }
     pub fn update(mut self, matches: &ArgMatches) -> Self {
+        // Update user value if CLI option is present
         if matches.value_of("user").is_some() {
             debug!("User value will be update");
             self.user = matches.value_of("user").unwrap().to_string();
         }
+        // Update greeting value if CLI option is present
         if matches.is_present("greeting") {
-            debug!("greeting value will be update");
+            debug!("Greeting value will be update");
             self.greeting = true;
         }
         self
@@ -87,9 +99,9 @@ impl Default for Config {
         }
     }
 }
-// Initialize the configuration with rudo.conf or defaults
+// Initialize the configuration
 pub fn init_conf() -> Result<Config, Box<dyn Error>> {
-    // Initialize configuration
+    // Initialize configuration with defaults
     debug!("Begin initializing default configuration");
     let mut conf = Config::default();
     debug!("Finish initializing default configuration");
@@ -98,28 +110,33 @@ pub fn init_conf() -> Result<Config, Box<dyn Error>> {
     let path = Path::new(CONFIG_PATH);
     debug!("Verifying that {} exist", CONFIG_PATH);
     if path.exists() && path.is_file() {
+        // Load the file and verify it's validity
         debug!("Loading {}", CONFIG_PATH);
         let result = conf.read_config_file();
         if let Err(err) = result {
             eprintln!("{}", err);
             error!("{}", err);
-            debug!("Removing file");
+            // Remove invalid file
+            info!("Removing invalid file");
             fs::remove_file(path)?;
-            let config = Config::default();
-            debug!("Creating new file with defaults");
-            config.create_config_file()?;
-            return Ok(config);
+            // Create new file with defaults
+            info!("Creating new file with defaults at {:?}", path);
+            conf.create_config_file()?;
+            return Ok(conf);
         } else {
-            debug!("Returning the content of the file");
+            // Return the valid data of the configuration file
+            debug!("Returning the content of the configuration file");
             conf = result.unwrap();
         }
-        debug!("Finish loading");
+        debug!("Finish loading configuration");
     } else if path.exists() && path.is_dir() {
+        // Error if it's a directory and let the user decide what to do
         let err = format!("Error: {} is a directory", CONFIG_PATH);
         error!("{}", err);
         return Err(From::from(err));
     } else if !path.exists() {
-        debug!("{} doesnt exist! Creating it", CONFIG_PATH);
+        // Create a configuration file if it doesn't exist
+        info!("{} doesnt exist! Creating it", CONFIG_PATH);
         eprintln!("{} doesnt exist! Creating it", CONFIG_PATH);
         conf.create_config_file()?;
         debug!("Creation has finish");

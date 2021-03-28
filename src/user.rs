@@ -14,39 +14,36 @@
 //    You should have received a copy of the GNU General Public License along
 //    with this program; if not, write to the Free Software Foundation, Inc.,
 //    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
 use std::error::Error;
 use std::sync::Arc;
 use users::{Group, Users, UsersCache};
 
-// Stock the User and is value for later use
+// Put the data of the actual user in a struct for later use
 pub struct User {
     pub user: Arc<users::User>,
-    //uid: u32,
     pub username: String,
     group: Vec<Group>,
 }
 
 impl User {
-    // Create the user and it's data for later use
     pub fn new() -> User {
+        // Create the user and it's data for later use
         debug!("Begin user creation");
         let userscache = UsersCache::new();
         let uid = userscache.get_current_uid();
         let user = userscache.get_user_by_uid(uid).unwrap();
         let username = user.name().to_str().unwrap().to_string();
         let group = user.groups().unwrap();
-        debug!("User create");
+        debug!("User has been create");
         User {
             user,
-            //uid,
             username,
             group,
         }
     }
     // Verify that the user is part of the list of authorized users
     pub fn verify_user(&self, userlist: &[String]) -> Result<(), Box<dyn Error>> {
-        debug!("Begin to verify user");
+        debug!("Begin to verify if user is authorized");
         let username = self.user.name().to_str().unwrap();
         let mut count = 0;
         for usr in userlist {
@@ -56,14 +53,17 @@ impl User {
         }
         if count == 1 {
             Ok(())
+        } else if count >= 2 {
+            error!("User is present multiple time in conf file");
+            Err(From::from("User is present multiple time in conf file"))
         } else {
-            error!("User not authorized");
-            Err(From::from("User not authorized"))
+            error!("User is not authorized");
+            Err(From::from("User is not authorized"))
         }
     }
     // Take the vector containing the Group and search for the group supply in the configuration
     pub fn verify_group(&self, arggroup: &str) -> Result<(), Box<dyn Error>> {
-        debug!("Begin group verification");
+        debug!("Beginning group verification");
         let group = &self.group;
         let mut count = 0;
 
@@ -73,15 +73,16 @@ impl User {
                 count += 1;
             }
         }
-
         if count == 1 {
-            info!("User is a member of authorized group");
-            println!("You are a member of the group {}", arggroup);
+            info!("User is a member of the authorized group: {}", arggroup);
             Ok(())
+        } else if count >= 2 {
+            error!("{} is list multiple time", arggroup);
+            let err = format!("{} is list multiple time", arggroup);
+            Err(From::from(err))
         } else {
-            error!("User is not a member of authorized group");
-            let error = "You are not a member of group ";
-            error.to_string().push_str(arggroup);
+            error!("User is not a member of the authorized group: {}", arggroup);
+            let error = format!("User is not a member of the authorized group: {}", arggroup);
             Err(From::from(error))
         }
     }
