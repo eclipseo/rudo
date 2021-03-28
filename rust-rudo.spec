@@ -4,7 +4,7 @@
 %global crate rudo
 
 Name:           rust-%{crate}
-Version:        0.5.1
+Version:        0.5.2
 Release:        1%{?dist}
 Summary:        Utility to gain privilege access on unix system with pam
 
@@ -87,5 +87,5 @@ which use "default" feature of "%{crate}" crate.
 %endif
 
 %changelog
-* Fri Mar 26 21:42:40 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.5.1-1
+* Fri Mar 26 21:42:40 EDT 2021 Rémi Lauzier <remilauzier@protonmail.com> - 0.5.2-1
 - Initial package
