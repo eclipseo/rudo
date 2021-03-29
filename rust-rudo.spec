@@ -21,7 +21,6 @@ BuildArch:      noarch
 Requires: pam
 
 BuildRequires:  rust-packaging
-BuildRequires:  pam-devel
 
 %global _description %{expand:
 Utility to gain privilege access on unix system with pam.}
@@ -74,6 +73,7 @@ which use "default" feature of "%{crate}" crate.
 
 %generate_buildrequires
 %cargo_generate_buildrequires
+echo "pam-devel"
 
 %build
 %cargo_build
