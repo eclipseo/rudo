@@ -23,13 +23,53 @@ use std::path::Path;
 
 static CONFIG_PATH: &str = "/etc/rudo.conf";
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Config {
-    pub user: String,
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct UserConfig {
+    pub username: String,
     pub group: String,
     pub password: bool,
-    pub userlist: Vec<String>,
     pub greeting: bool,
+}
+
+impl UserConfig {
+    pub fn update(mut self, matches: &ArgMatches) -> Self {
+        // Update greeting value if CLI option is present
+        if matches.is_present("greeting") {
+            debug!("Greeting value will be update");
+            self.greeting = true;
+        }
+        self
+    }
+}
+
+impl Default for UserConfig {
+    fn default() -> Self {
+        Self {
+            username: String::from("root"),
+            group: String::from("wheel"),
+            password: true,
+            greeting: true,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RudoConfig {
+    pub impuser: String,
+}
+
+impl Default for RudoConfig {
+    fn default() -> Self {
+        Self {
+            impuser: String::from("root"),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Config {
+    pub rudo: RudoConfig,
+    pub user: Vec<UserConfig>,
 }
 
 impl Config {
@@ -77,12 +117,7 @@ impl Config {
         // Update user value if CLI option is present
         if matches.value_of("user").is_some() {
             debug!("User value will be update");
-            self.user = matches.value_of("user").unwrap().to_string();
-        }
-        // Update greeting value if CLI option is present
-        if matches.is_present("greeting") {
-            debug!("Greeting value will be update");
-            self.greeting = true;
+            self.rudo.impuser = matches.value_of("user").unwrap().to_string();
         }
         self
     }
@@ -91,11 +126,8 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            user: String::from("root"),
-            group: String::from("wheel"),
-            password: true,
-            userlist: vec![String::from("root")],
-            greeting: true,
+            rudo: RudoConfig::default(),
+            user: vec![UserConfig::default()],
         }
     }
 }
@@ -142,4 +174,14 @@ pub fn init_conf() -> Result<Config, Box<dyn Error>> {
         debug!("Creation has finish");
     }
     Ok(conf)
+}
+
+pub fn extract_userconf(conf: Vec<UserConfig>, username: &str) -> Result<UserConfig, Box<dyn Error>> {
+    let mut user = UserConfig::default();
+    for cf in conf {
+        if cf.username == username {
+            user = cf;
+        }
+    }
+    Ok(user)
 }

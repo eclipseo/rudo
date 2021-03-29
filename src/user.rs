@@ -42,20 +42,11 @@ impl User {
         }
     }
     // Verify that the user is part of the list of authorized users
-    pub fn verify_user(&self, userlist: &[String]) -> Result<(), Box<dyn Error>> {
+    pub fn verify_user(&self, username: &str) -> Result<(), Box<dyn Error>> {
         debug!("Begin to verify if user is authorized");
-        let username = self.user.name().to_str().unwrap();
-        let mut count = 0;
-        for usr in userlist {
-            if usr == username {
-                count += 1;
-            }
-        }
-        if count == 1 {
+        let actualuser = self.user.name().to_str().unwrap();
+        if actualuser == username {
             Ok(())
-        } else if count >= 2 {
-            error!("User is present multiple time in conf file");
-            Err(From::from("User is present multiple time in conf file"))
         } else {
             error!("User is not authorized");
             Err(From::from("User is not authorized"))
@@ -104,7 +95,7 @@ mod tests {
     #[test]
     fn test_verify_user() -> Result<(), Box<dyn Error>> {
         let userdata = User::new();
-        if userdata.verify_user(&[String::from("test")]).is_err() {
+        if userdata.verify_user("test").is_err() {
             Ok(())
         } else {
             Err(From::from("The user should not correspond with test"))

@@ -40,25 +40,32 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     let conf = config::init_conf()?;
     debug!("Configuration has been initialize");
 
-    // Update configuration if necessary, as CLI as the priority
-    debug!("Update configuration with CLI option");
-    let conf = config::Config::update(conf, &matches);
-    debug!("Configuration has been update");
-
     // Create the user data for later use
     debug!("User information extraction");
     let userdata = user::User::new();
     debug!("User extraction finish");
 
+    let userconf = config::extract_userconf(conf.user.clone(), &userdata.username)?;
+
+    // Update configuration if necessary, as CLI as the priority
+    debug!("Update configuration with CLI option");
+    let userconf = config::UserConfig::update(userconf, &matches);
+    debug!("Configuration has been update");
+
+    // Update configuration if necessary, as CLI as the priority
+    debug!("Update configuration with CLI option");
+    let conf = config::Config::update(conf, &matches);
+    debug!("Configuration has been update");
+
     // Get the uid and gid of the impersonate user for further use
     debug!("Extract uid and gid of the impersonate user");
-    let impuser = users::get_user_by_name(&conf.user).unwrap();
+    let impuser = users::get_user_by_name(&conf.rudo.impuser).unwrap();
     let impuser_uid = impuser.uid();
     let impuser_gid = impuser.primary_group_id();
     debug!("Extraction finish");
 
     // Greet the user if the conf said so
-    if conf.greeting {
+    if userconf.greeting {
         debug!("Start user greeting");
         println!("Hello {}!", userdata.username);
         debug!("User greeting finish");
@@ -66,12 +73,12 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
 
     // Authenticate the user with the list of authorized user and group
     debug!("Authenticate the user");
-    auth::authentification(&conf, &userdata)?;
+    auth::authentification(&userconf, &userdata)?;
     debug!("User has been authenticate");
 
     // Create the pam context and authenticate the user with pam
     debug!("Pam context initialization and identification of user");
-    let mut context = auth::auth_pam(&conf, &userdata)?;
+    let mut context = auth::auth_pam(&conf, &userconf, &userdata)?;
     debug!("Pam context create and user authenticate");
 
     // Open session with pam credentials

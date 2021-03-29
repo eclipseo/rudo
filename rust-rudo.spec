@@ -21,7 +21,6 @@ BuildArch:      noarch
 Requires: pam
 
 BuildRequires:  rust-packaging
-BuildRequires:  pam-devel
 
 %global _description %{expand:
 Utility to gain privilege access on unix system with pam.}
