@@ -36,7 +36,7 @@ Summary:        %{summary}
 %files       -n %{crate}
 %doc README.md
 %license LICENSE
-%config(noreplace) %{_sysconfdir}/pam.d/rudo
+%config conf/rudo %{_sysconfdir}/pam.d/rudo
 %ghost %{_sysconfdir}/rudo.conf
 %attr(4755,root,root) %{_bindir}/rudo
 %endif
