@@ -20,7 +20,7 @@ use systemd::journal;
 
 pub fn log_journald(debug: bool) -> Result<(), Box<dyn Error>> {
     // Initialize Logs with journald
-    journal::JournalLog::init()?;
+    if let Ok(()) = journal::JournalLog::init() {
     // Determine the maximum level of log the user want
     if debug {
         log::set_max_level(LevelFilter::Debug);
@@ -28,6 +28,9 @@ pub fn log_journald(debug: bool) -> Result<(), Box<dyn Error>> {
     } else {
         log::set_max_level(LevelFilter::Info);
         info!("Starting logs");
+    }
+    } else if journal::JournalLog::init().is_err() {
+        return Err(From::from("Error can't initialize logging with journald"));
     }
     Ok(())
 }
