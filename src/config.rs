@@ -88,10 +88,10 @@ impl Config {
         // Sync data to drive
         debug!("Syncing data to drive");
         file.sync_all()?;
-        // Set permisions of 600 to restreint access
+        // Set permisions of 640 to restreint access
         debug!("Set file permission");
         let mut perms = file.metadata()?.permissions();
-        perms.set_mode(0o600);
+        perms.set_mode(0o640);
         file.set_permissions(perms)?;
         debug!("File permission has been set");
 
@@ -178,7 +178,10 @@ pub fn init_conf() -> Result<Config, Box<dyn Error>> {
 
 // Extract from the vec of UserConfig of rudo.conf the user presently accessing rudo
 // Pass all the information associate with it after
-pub fn extract_userconf(conf: Vec<UserConfig>, username: &str) -> Result<UserConfig, Box<dyn Error>> {
+pub fn extract_userconf(
+    conf: Vec<UserConfig>,
+    username: &str,
+) -> Result<UserConfig, Box<dyn Error>> {
     let mut user = UserConfig::default();
     for cf in conf {
         if cf.username == username {
