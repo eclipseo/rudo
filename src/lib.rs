@@ -45,7 +45,10 @@ pub fn run(matches: ArgMatches) -> Result<(), Box<dyn Error>> {
     let userdata = user::User::new();
     debug!("User extraction finish");
 
+    // Extract the information from rudo.conf that is tie to the actual user
+    debug!("Extraction of the vec of Userconf in rudo.conf");
     let userconf = config::extract_userconf(conf.user.clone(), &userdata.username)?;
+    debug!("Extraction has been done");
 
     // Update configuration if necessary, as CLI as the priority
     debug!("Update configuration with CLI option");

@@ -66,17 +66,23 @@ impl Token {
         if !token_path.exists() {
             debug!("Token_path doesn't exist, will create it");
             let path = token_path.parent().unwrap();
-            debug!("Create directory: {:?}", path);
 
             // Create the directory with mode 600 to restreint access
+            debug!("Create directory: {:?}", path);
             DirBuilder::new().mode(0o600).recursive(true).create(path)?;
 
+            // Put the token data in a string of yaml
             debug!("Put Token in a string");
             let token_file = serde_yaml::to_string(&self)?;
+
+            // Creating the file for the token
             debug!("creating the token file");
             let mut file = File::create(token_path)?;
+
+            // Write the token data in the file
             debug!("write the string in the file");
             file.write_all(&token_file.as_bytes())?;
+
             // Sync data to be sure everything is writing on drive
             debug!("Syncing data on drive");
             file.sync_all()?;
@@ -88,16 +94,19 @@ impl Token {
             file.set_permissions(perms)?;
             debug!("File permission has been set");
         } else {
-            // Erase ancient file and create new one
+            // Erase the ancient file and create new one
             debug!("Token_path exist will erase it");
             fs::remove_file(token_path)?;
 
+            // Put the token data in a string of yaml
             debug!("Put Token in a string");
             let token_file = serde_yaml::to_string(&self)?;
 
+            // Creating the file for the token
             debug!("Creating the token file");
             let mut file = File::create(token_path)?;
 
+            // Write the token data in the file
             debug!("Write the string in the file");
             file.write_all(&token_file.as_bytes())?;
 

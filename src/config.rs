@@ -176,6 +176,8 @@ pub fn init_conf() -> Result<Config, Box<dyn Error>> {
     Ok(conf)
 }
 
+// Extract from the vec of UserConfig of rudo.conf the user presently accessing rudo
+// Pass all the information associate with it after
 pub fn extract_userconf(conf: Vec<UserConfig>, username: &str) -> Result<UserConfig, Box<dyn Error>> {
     let mut user = UserConfig::default();
     for cf in conf {
