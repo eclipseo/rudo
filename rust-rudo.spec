@@ -70,6 +70,7 @@ which use "default" feature of "%{crate}" crate.
 %prep
 %autosetup -n %{crate}-%{version_no_tilde} -p1
 %cargo_prep
+cp conf/* ~/
 
 %generate_buildrequires
 %cargo_generate_buildrequires
@@ -81,10 +82,10 @@ echo "systemd-devel"
 
 %install
 %cargo_install
-install -Dpm 0640 -t %{buildroot}/etc/rudo.conf \
-  conf/rudo.conf
-install -Dpm 0644 -t %{buildroot}/etc/pam.d/rudo \
-  conf/rudo
+mkdir -p %{buildroot}/etc/
+mkdir -p %{buildroot}/etc/pam.d/
+install -pm 0640 ~/rudo.conf %{buildroot}/etc/rudo.conf
+install -pm 0644 ~/rudo %{buildroot}/etc/pam.d/rudo
 
 %if %{with check}
 %check
