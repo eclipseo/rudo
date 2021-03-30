@@ -74,6 +74,7 @@ which use "default" feature of "%{crate}" crate.
 %generate_buildrequires
 %cargo_generate_buildrequires
 echo "pam-devel"
+echo "systemd-devel"
 
 %build
 %cargo_build
