@@ -8,8 +8,8 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/remilauzier/rudo?style=flat-square)
 # Description
 **Rudo** "RustUser do" allows a system administrator to give certain
-users (or groups of users) the ability to run some commands
-as **root** or another user while logging all commands and arguments.
+users the ability to run some commands as **root** or another user while 
+logging all commands and it's arguments.
 
 # Functionality
 * You can give **Rudo** a command to execute like `rudo some-command with-args`
