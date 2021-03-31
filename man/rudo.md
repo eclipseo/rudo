@@ -2,22 +2,22 @@
 Rudo is a utility to gain privilege access on unix system with pam.
 
 # SYNOPSIS
-USAGE:
-    rudo [FLAGS] [OPTIONS] <command>... --edit <edit> --shell
+USAGE: \
+    rudo [FLAGS] [OPTIONS] command... --edit edit --shell
 
-FLAGS:
-    -d, --debug       Log debug messages
-    -g, --greeting    Greeting user
-    -h, --help        Prints help information
-    -s, --shell       Initialize a privilege shell
+FLAGS: \
+    -d, --debug       Log debug messages \
+    -g, --greeting    Greeting user \
+    -h, --help        Prints help information \
+    -s, --shell       Initialize a privilege shell \
     -V, --version     Prints version information
 
-OPTIONS:
-    -e, --edit <edit>    Edit a document with the editor of user
-    -u, --user <user>    The user you want to impersonate
+OPTIONS: \
+    -e, --edit edit    Edit a document with the editor of user \
+    -u, --user user    The user you want to impersonate
 
-ARGS:
-    <command>...    Pass the command to execute
+ARGS: \
+    command...    Pass the command to execute
 
 
 # DESCRIPTION
@@ -26,26 +26,26 @@ users the ability to run some commands as **root** or another user while
 logging all commands and it's arguments.
 
 # EXAMPLES
-rudo command argument
-rudo --shell
+* rudo command argument
+* rudo --shell
 
 # FILES
-/etc/rudo.conf
-/etc/pam.d/rudo
+* /etc/rudo.conf
+* /etc/pam.d/rudo
 
 # CONFIGURATION
 ---
-rudo:
-  impuser: unix name of the user you want to impersonate
-user:
-  - username: your unix user name
-    group: the name of the group you must be a member to have privilege access
-    password: true or false, if you want to give your password each session or not
-    greeting: true or false if you want the hello message each time you run rudo
-  - username: your unix user name
-    group: the name of the group you must be a member to have privilege access
-    password: true or false, if you want to give your password each session or not
-    greeting: true or false if you want the hello message each time you run rudo
+* rudo:
+  * impuser: unix name of the user you want to impersonate
+* user:
+  - username: your unix user name \
+    group: the name of the group you must be a member to have privilege access \
+    password: true or false, if you want to give your password each session or not \
+    greeting: true or false if you want the hello message each time you run rudo \
+  - username: your unix user name \
+    group: the name of the group you must be a member to have privilege access \
+    password: true or false, if you want to give your password each session or not \
+    greeting: true or false if you want the hello message each time you run rudo \
 
 # AUTHOR
 Rémi Lauzier <remilauzier@protonmail.com>
