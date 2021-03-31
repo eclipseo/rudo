@@ -34,7 +34,7 @@ Summary:        %{summary}
 %description -n %{crate} %{_description}
 
 %files       -n %{crate}
-%doc README.md
+%doc README.md man/rudo.md
 %license LICENSE
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/pam.d/rudo
 %attr(0640,root,root) %config(noreplace) %{_sysconfdir}/rudo.conf
@@ -84,8 +84,8 @@ echo "systemd-devel"
 %cargo_install
 mkdir -p %{buildroot}/etc/
 mkdir -p %{buildroot}/etc/pam.d/
-install -pm 0640 ~/rudo.conf %{buildroot}/etc/rudo.conf
-install -pm 0644 ~/rudo %{buildroot}/etc/pam.d/rudo
+install -m 0640 ~/rudo.conf %{buildroot}/etc/rudo.conf
+install -m 0644 ~/rudo %{buildroot}/etc/pam.d/rudo
 
 %if %{with check}
 %check
