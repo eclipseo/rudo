@@ -11,6 +11,9 @@
 users the ability to run some commands as **root** or another user while 
 logging all commands and it's arguments.
 
+# Package
+https://copr.fedorainfracloud.org/coprs/remilauzier/rudo/
+
 # Functionality
 * You can give **Rudo** a command to execute like `rudo some-command with-args`
 * You can invoke a shell with `rudo -s` or `rudo --shell`
